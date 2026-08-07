@@ -3,6 +3,9 @@
 # 예시 응답 데이터
 wanted_api_example.json
 
+# 출력 파일들
+output/
+
 # 기타 제외할 패턴들 (필요시)
 *.log
 *.tmp
