@@ -1,0 +1,16 @@
+# Claude Code가 읽지 않을 파일/디렉토리
+
+# 예시 응답 데이터
+wanted_api_example.json
+
+# 기타 제외할 패턴들 (필요시)
+*.log
+*.tmp
+node_modules/
+__pycache__/
+.env
+.venv/
+venv/
+*.pyc
+.DS_Store
+*.env
