@@ -1,37 +1,132 @@
-해야할 것. AI agent라는 무엇인가? 뭘 해봐야하는가?
-1. API 키 발급 + Hello World
-Anthropic Console(console.anthropic.com) 또는 OpenAI에서 API 키 발급받고, Python으로 메시지 한 번 보내고 응답 받는 것부터 (30분). 이게 안 되면 다음 단계 다 막힘.
-2. Tool Use(Function Calling) 익히기
-'날씨 조회', '계산기' 같은 간단한 함수 1~2개를 정의해서 LLM이 스스로 '이 함수를 호출해야겠다'고 판단하게 만들어보기. 여기서 tool_use / tool_result 흐름을 몸으로 이해하는 게 핵심 (2~3시간).
-3. Multi-step 루프 만들기
-한 번의 호출로 끝내지 않고, LLM이 도구 결과를 받아서 '더 필요한 작업이 있는지' 스스로 판단해 반복하는 while 루프 구조를 짜기. 이게 바로 'Agent'라고 불리는 것의 실체입니다 (2~3시간).
-4. 실용적인 미니 프로젝트로 확장
-예: 'GitHub 이슈를 읽고 우선순위 분류해서 요약 리포트 생성', '엑셀 데이터 읽고 이상치 찾아서 알려주기' 같은, 본인 업무와 관련된 작은 자동화 하나를 골라 완성하기. 채용 공고에 쓸 '사이드 프로젝트'가 바로 이겁니다.
-5. GitHub에 정리 + README 작성
-코드보다 README가 더 중요합니다. '왜 이 구조로 설계했는지', 'Tool Use를 어떻게 활용했는지', '어떤 문제를 자동화했는지'를 명확히 써두면 포트폴리오/면접 자료로 바로 씁니다.
+# 🤖 AI 채용공고 매칭 시스템
 
+> 수백 개의 채용공고를 일일이 확인하는 대신, AI가 자동으로 내 스킬과 매칭도를 분석합니다.
 
-----
-[1차 개발단계]
-분야 : 무엇을 만드려고 하는가?
--> 채용분석 공고 알리미
+## 💡 왜 만들었나?
 
-데이터는 어떤걸로?: 일단 원티드 API 사용 -> 추후 타 플랫폼 크롤링 예정
+매일 쏟아지는 채용공고를 하나씩 읽고 "이게 나한테 맞나?"를 판단하는 건 비효율적입니다.
+**AI Agent가 공고를 분석하고 내 프로필과 비교해서 점수를 매겨주면 어떨까?**
 
-아래와 같은 간단한 파이프라인으로 구축
-![wanted_agent_pipeline.svg](document/wanted_agent_pipeline.svg)
-1. 원티드 API 조회 — 이미 알고 있다니 스킵. 신규 공고 ID 리스트를 받아옵니다.
+## 🎯 학습 목표
 
-2. AI Agent (Tool 루프) — 여기가 핵심입니다. Gemini function calling으로 도구 두 개를 정의하세요:
+AI Agent 개발의 핵심 개념을 단계별로 학습하기 위한 프로젝트입니다.
 
-get_job_detail(job_id): 원티드 상세 API 호출해서 본문 텍스트 반환 
-extract_requirements(text): 굳이 별도 함수 안 만들고 LLM이 텍스트 읽고 바로 구조화해도 됨 (JSON 스키마로 강제)
+1. **Function Calling** - LLM이 필요할 때 함수를 직접 호출하도록 구현
+2. **Multi-step Reasoning** - 여러 단계를 거쳐 결론을 도출하는 추론 과정 구현
+3. **실용적 자동화** - 실제 API와 연동하여 동작하는 시스템 구축
 
-Agent가 "이 공고 상세를 더 봐야겠다" → 도구 호출 → 결과 받고 → "요구사항 정리 끝, 다음 판단으로" 넘어가는 이 흐름 자체가 multi-step reasoning입니다.
+## 🏗️ 어떻게 작동하나?
 
-3. 스킬 매칭 판단 — 본인 이력서/기술스택을 텍스트로 프롬프트에 박아두고, "이 공고 요구사항과 내 스킬을 비교해서 0~100점 매칭 스코어랑 이유를 JSON으로 내놔"라고 시키면 됩니다.
+```
+원티드 API 조회
+    ↓
+AI가 공고 분석 (Function Calling)
+    ↓
+내 프로필과 비교 (0-100점 매칭)
+    ↓
+결과 저장 & 추천 판단
+```
 
-4. 분기 — 스코어가 임계값(예: 70점) 넘으면 Slack Webhook POST, 아니면 그냥 로그만 남기고 종료.
+**핵심 기술:**
+- Gemini Function Calling으로 공고 본문 자동 분석
+- Pydantic으로 구조화된 데이터 추출
+- JSON Schema로 응답 형식 강제
 
-위와같은 계획으로 진행.
+## 📊 실행 결과
+
+```bash
+$ python3 main.py 365200
+
+📋 공고 ID 365200 분석 중...
+
+🔍 1단계: 공고 요구사항 추출 중...
+✅ 요구사항 추출 완료
+  - 필요 기술: Python, Django, Kotlin, Spring, AWS
+  - 경력: 5년
+  - 키워드: 백엔드, MSA, 결제
+
+🎯 2단계: 스킬 매칭 분석 중...
+✅ 매칭 분석 완료
+
+============================================================
+📊 매칭 점수: 75점
+============================================================
+
+✅ 매칭되는 스킬: Python, Django, Spring Boot
+❌ 부족한 스킬: Kotlin, AWS, 5년 경력
+
+💡 이유: Django와 Python 경험이 매칭되지만, 경력 년수가 부족하고 Kotlin 경험이 없습니다.
+
+🎉 추천! (임계값 70점 이상)
+💾 저장 완료: output/job_365200_20260807_143052.json
+```
+
+## 🎓 핵심 학습 포인트
+
+### Function Calling
+```python
+# LLM이 필요 시 자동으로 함수 호출
+tools = [get_job_detail]
+
+response = client.models.generate_content(
+    contents="job_id=365200 공고를 분석해줘",
+    config={"tools": tools, "automatic_function_calling": True}
+)
+```
+
+### Multi-step Reasoning
+1. 공고 분석 (Function Calling으로 데이터 수집)
+2. 스킬 매칭 (수집된 데이터를 기반으로 분석)
+3. 결과 판단 (점수를 바탕으로 추천 여부 결정)
+
+## 📂 프로젝트 구조
+
+```
+├── main.py           # 메인 파이프라인
+├── wanted_api.py     # 원티드 API 호출
+├── models.py         # Pydantic 데이터 모델
+├── config.py         # 설정 (모델, 프로필)
+├── utils.py          # 유틸리티 (결과 저장)
+└── output/           # 분석 결과 JSON
+```
+
+## 🔮 향후 개선 계획
+
+- [ ] Slack 알림 연동
+- [ ] 여러 플랫폼 크롤링
+- [ ] 배치 자동 스캔
+- [ ] 웹 대시보드
+
+---
+
+## 🚀 설치 및 실행
+
+### 1. 패키지 설치
+```bash
+pip install google-genai python-dotenv requests pydantic
+```
+
+### 2. 환경변수 설정
+`.env` 파일 생성:
+```
+GEMINI_API_KEY=your_api_key_here
+```
+
+### 3. 프로필 설정
+`config.py`에서 본인 프로필 수정:
+```python
+MY_PROFILE = """
+- 언어: Python, Java
+- 프레임워크: Django, Spring Boot
+- 경력: 3년차 백엔드
+"""
+```
+
+### 4. 실행
+```bash
+python3 main.py <job_id>
+```
+
+## 📝 참고 자료
+- [Gemini Function Calling 가이드](https://ai.google.dev/gemini-api/docs/function-calling)
 
