@@ -22,21 +22,66 @@
 2. **배치 자동화**: 여러 공고를 안정적으로 처리
 3. **에러 핸들링**: 실패를 다루는 프로덕션 레벨 설계
 
-## 🏗️ 주요 기능
+## 🔄 시스템 흐름도
 
-### 1. 배치 처리
-```bash
-# 검색 키워드로 자동 검색
-python batch_matcher.py --query "백엔드" --limit 10
+### 2단계 파이프라인 (수집 → 분석 분리)
 
-# 여러 공고를 한 번에 처리
-python batch_matcher.py --job-ids 365200,365201,365202
+```
+1단계: 공고 수집
+검색 → API 호출 → data/{query}/job_*.json 저장
 
-# 파일에서 읽기
-python batch_matcher.py --input jobs.txt
+
+2단계: 공고 분석 (핵심) ⭐
+─────────────────────────────────────
+data/{query}/ 읽기
+    ↓
+각 공고 분석 (Gemini API)
+    ├─ 요구사항 추출
+    └─ 스킬 매칭 분석
+    ↓
+중복 체크 (이미 분석됨 → 스킵)
+    ↓
+실패 시 재시도 로직 (TODO)
+    ├─ Retry with exponential backoff
+    ├─ Rate limiting 처리
+    └─ 최종 실패 시 로그
+    ↓
+output/{query}/job_*_analyzed.json 저장
+
+
+3단계: Evaluation (다음 구현) ⭐
+─────────────────────────────────────
+테스트셋 로드 (추천/비추천 공고)
+    ↓
+각 공고 분석
+    ↓
+예측 vs 실제 비교
+    ↓
+정확도 계산 & 리포트 생성
 ```
 
-### 2. Evaluation 시스템
+## 🏗️ 주요 기능
+
+### 1. 공고 수집 (collector.py)
+```bash
+# 검색 키워드로 공고 수집
+python collector.py --query "백엔드" --limit 20
+
+# 결과: data/백엔드/job_*.json 생성
+# - 중복 자동 스킵
+# - 실패한 공고는 로그 기록
+```
+
+### 2. 공고 분석 (batch_matcher.py)
+```bash
+# 수집된 공고 분석
+python batch_matcher.py --query "백엔드"
+
+# 결과: output/백엔드/job_*_analyzed.json 생성
+# - 매칭 점수, 추천 여부, 분석 상세 정보
+```
+
+### 3. Evaluation 시스템 (TODO)
 ```python
 # 테스트셋으로 정확도 측정
 python evaluate.py --test-set evaluation/test_jobs.json
@@ -90,21 +135,30 @@ python scheduler.py --cron "0 9 * * *"
 ├── utils/                     # 유틸리티 모듈
 │   ├── __init__.py
 │   └── file_handler.py        # 파일 저장
-├── batch_matcher.py           # 배치 처리 메인
+├── collector.py               # 1단계: 공고 수집
+├── batch_matcher.py           # 2단계: 공고 분석
 ├── matcher.py                 # 단일 공고 분석 로직
 ├── models.py                  # 데이터 모델
 ├── scheduler.py               # 자동 스케줄링 (TODO)
 ├── retry_handler.py           # 재시도 로직 (TODO)
-├── cache_manager.py           # 중복 분석 방지 (TODO)
 ├── slack_notifier.py          # Slack 알림 (TODO)
 ├── evaluation/                # (TODO)
 │   ├── evaluate.py            # Evaluation 실행
 │   ├── test_jobs.json         # 테스트셋
 │   └── metrics.py             # 정확도 계산
+├── data/                      # 수집된 원본 공고
+│   ├── 백엔드/
+│   │   └── job_*.json
+│   └── AI/
+│       └── job_*.json
 ├── output/                    # 분석 결과
-│   └── job_*.json
+│   ├── 백엔드/
+│   │   └── job_*_analyzed.json
+│   └── AI/
+│       └── job_*_analyzed.json
 └── logs/                      # 실행 로그
-    └── batch_evaluator.log
+    ├── collector.log
+    └── batch_matcher.log
 ```
 
 ## 🎓 핵심 학습 포인트
@@ -158,27 +212,29 @@ GEMINI_API_KEY=your_api_key
 SLACK_WEBHOOK_URL=your_slack_webhook  # (선택사항)
 ```
 
-### 3. 테스트셋 준비
+### 3. 공고 수집
 ```bash
-# evaluation/test_jobs.json에 본인이 판단한 공고 리스트 작성
-# 추천 공고 10개 + 비추천 공고 10개
+# 검색 키워드로 공고 수집
+python collector.py --query "백엔드" --limit 20
+
+# 결과 확인
+ls data/백엔드/
+# → job_365200.json, job_365201.json, ...
 ```
 
-### 4. Evaluation 실행
+### 4. 공고 분석
 ```bash
-python evaluation/evaluate.py
+# 수집된 공고 분석
+python batch_matcher.py --query "백엔드"
+
+# 결과 확인
+ls output/백엔드/
+# → job_365200_analyzed.json, ...
 ```
 
-### 5. 배치 처리
+### 5. Evaluation 실행 (TODO)
 ```bash
-# 검색으로 자동 수집
-python batch_matcher.py --query "백엔드" --limit 10
-
-# 직접 ID 입력
-python batch_matcher.py --job-ids 365200,365201,365202
-
-# 파일에서 읽기
-python batch_matcher.py --input jobs.txt
+python evaluation/evaluate.py --query "백엔드"
 ```
 
 ## 📊 Evaluation 결과 예시

@@ -1,16 +1,16 @@
 """
 배치 공고 분석 시스템
-여러 공고를 자동으로 처리하고 결과를 저장
+data/{query}/ 폴더의 수집된 공고를 분석하여 output/{query}/에 저장
 """
 import argparse
+import json
 import os
 import sys
+from pathlib import Path
 from typing import List
 from dotenv import load_dotenv
 from matcher import JobMatcher
-from utils import save_analysis_result
 from config import MATCH_THRESHOLD, GEMINI_MODEL, MY_PROFILE, setup_logger
-from api import search_jobs_by_query
 
 # .env 파일 로드
 load_dotenv()
@@ -22,29 +22,57 @@ logger = setup_logger('batch_matcher', log_file='logs/batch_matcher.log')
 class BatchMatcher:
     """배치 공고 매칭 처리"""
 
-    def __init__(self, api_key: str):
+    def __init__(self, api_key: str, query: str, base_data_dir: str = "data", base_output_dir: str = "output"):
         self.matcher = JobMatcher(api_key)
-        self.results = []
+        self.query = query
+        self.data_dir = Path(base_data_dir) / query
+        self.output_dir = Path(base_output_dir) / query
+        self.output_dir.mkdir(parents=True, exist_ok=True)
+
+    def is_analyzed(self, job_id: str) -> bool:
+        """이미 분석된 공고인지 확인"""
+        file_path = self.output_dir / f"job_{job_id}_analyzed.json"
+        return file_path.exists()
+
+    def get_collected_jobs(self) -> List[str]:
+        """수집된 공고 파일 목록 가져오기"""
+        if not self.data_dir.exists():
+            logger.error(f"❌ 데이터 폴더가 없습니다: {self.data_dir}")
+            return []
+
+        job_files = list(self.data_dir.glob("job_*.json"))
+        job_ids = [f.stem.replace("job_", "") for f in job_files]
+
+        logger.info(f"📁 수집된 공고: {len(job_ids)}개 ({self.data_dir})")
+        return job_ids
 
     def process_job(self, job_id: str) -> dict:
-        """단일 공고 처리"""
+        """단일 공고 분석"""
         logger.info(f"\n{'=' * 60}")
         logger.info(f"📋 공고 ID {job_id} 분석 중...")
         logger.info('=' * 60)
 
+        # 중복 체크
+        if self.is_analyzed(job_id):
+            logger.info(f"⏭️  이미 분석됨: {job_id}")
+            return {
+                "job_id": job_id,
+                "status": "skipped",
+                "reason": "already_analyzed"
+            }
+
         try:
-            # 1. 요구사항 추출
-            logger.info("🔍 1단계: 공고 요구사항 추출 중...")
+            # 1. 분석
+            logger.info("🔍 공고 분석 중...")
             job_requirement, match_result = self.matcher.analyze(job_id)
 
-            logger.info("✅ 요구사항 추출 완료")
+            logger.info("✅ 분석 완료")
             logger.info(f"  - 필요 기술: {', '.join(job_requirement.skills[:5])}")
             logger.info(f"  - 경력: {job_requirement.experience_years}년")
             logger.info(f"  - 키워드: {', '.join(job_requirement.keywords[:3])}")
 
-            # 2. 매칭 분석
-            logger.info("\n🎯 2단계: 스킬 매칭 분석 완료")
-            logger.info(f"📊 매칭 점수: {match_result.score}점")
+            # 2. 매칭 결과
+            logger.info(f"\n📊 매칭 점수: {match_result.score}점")
             logger.info(f"✅ 매칭되는 스킬: {', '.join(match_result.matched_skills) if match_result.matched_skills else '없음'}")
             logger.info(f"❌ 부족한 스킬: {', '.join(match_result.missing_skills) if match_result.missing_skills else '없음'}")
 
@@ -57,13 +85,20 @@ class BatchMatcher:
 
             # 4. 결과 저장
             logger.info("\n💾 분석 결과 저장 중...")
-            saved_path = save_analysis_result(
-                job_id=job_id,
-                job_requirement=job_requirement,
-                match_result=match_result,
-                model_name=GEMINI_MODEL,
-                profile=MY_PROFILE
-            )
+            result_data = {
+                "job_id": job_id,
+                "query": self.query,
+                "requirement": job_requirement.model_dump(),
+                "match_result": match_result.model_dump(),
+                "recommended": is_recommended,
+                "model": GEMINI_MODEL,
+                "profile": MY_PROFILE
+            }
+
+            saved_path = self.output_dir / f"job_{job_id}_analyzed.json"
+            with open(saved_path, 'w', encoding='utf-8') as f:
+                json.dump(result_data, f, ensure_ascii=False, indent=2)
+
             logger.info(f"✅ 저장 완료: {saved_path}")
 
             return {
@@ -71,7 +106,7 @@ class BatchMatcher:
                 "status": "success",
                 "score": match_result.score,
                 "recommended": is_recommended,
-                "saved_path": saved_path
+                "saved_path": str(saved_path)
             }
 
         except Exception as e:
@@ -84,7 +119,8 @@ class BatchMatcher:
 
     def process_batch(self, job_ids: List[str]) -> List[dict]:
         """여러 공고 배치 처리"""
-        logger.info(f"\n🚀 배치 처리 시작: 총 {len(job_ids)}개 공고")
+        logger.info(f"\n🚀 배치 처리 시작: '{self.query}' - 총 {len(job_ids)}개")
+        logger.info(f"📂 출력 위치: {self.output_dir}")
         logger.info("=" * 60)
 
         results = []
@@ -106,11 +142,13 @@ class BatchMatcher:
 
         total = len(results)
         success = sum(1 for r in results if r["status"] == "success")
-        failed = total - success
+        skipped = sum(1 for r in results if r["status"] == "skipped")
+        failed = sum(1 for r in results if r["status"] == "failed")
         recommended = sum(1 for r in results if r.get("recommended", False))
 
         logger.info(f"\n전체: {total}개")
-        logger.info(f"✅ 성공: {success}개")
+        logger.info(f"✅ 신규 분석: {success}개")
+        logger.info(f"⏭️  중복 스킵: {skipped}개")
         logger.info(f"❌ 실패: {failed}개")
         logger.info(f"🎉 추천: {recommended}개\n")
 
@@ -124,53 +162,13 @@ class BatchMatcher:
 def main():
     parser = argparse.ArgumentParser(description="배치 공고 매칭 시스템")
     parser.add_argument(
-        "--job-ids",
-        type=str,
-        help="쉼표로 구분된 공고 ID 리스트 (예: 365200,365201,365202)"
-    )
-    parser.add_argument(
-        "--input",
-        type=str,
-        help="공고 ID 리스트가 담긴 파일 (한 줄에 하나씩)"
-    )
-    parser.add_argument(
         "--query",
         type=str,
-        help="검색 키워드 (예: 백엔드, AI, mlops)"
-    )
-    parser.add_argument(
-        "--limit",
-        type=int,
-        default=12,
-        help="검색 결과 개수 (기본: 12)"
+        required=True,
+        help="검색 키워드 (data/{query}/ 폴더에서 읽기)"
     )
 
     args = parser.parse_args()
-
-    # 공고 ID 리스트 파싱
-    job_ids = []
-    if args.job_ids:
-        job_ids = [jid.strip() for jid in args.job_ids.split(",")]
-    elif args.input:
-        if not os.path.exists(args.input):
-            logger.error(f"❌ 파일을 찾을 수 없습니다: {args.input}")
-            sys.exit(1)
-        with open(args.input, 'r') as f:
-            job_ids = [line.strip() for line in f if line.strip()]
-    elif args.query:
-        logger.info(f"🔍 '{args.query}' 검색 중... (최대 {args.limit}개)")
-        job_ids = search_jobs_by_query(query=args.query, limit=args.limit)
-        if not job_ids:
-            logger.error(f"❌ 검색 결과가 없습니다.")
-            sys.exit(1)
-        logger.info(f"✅ {len(job_ids)}개 공고 발견: {', '.join(job_ids[:5])}{'...' if len(job_ids) > 5 else ''}")
-    else:
-        parser.print_help()
-        sys.exit(1)
-
-    if not job_ids:
-        logger.error("❌ 공고 ID가 없습니다.")
-        sys.exit(1)
 
     # API 키 확인
     api_key = os.getenv('GEMINI_API_KEY')
@@ -179,7 +177,17 @@ def main():
         sys.exit(1)
 
     # 배치 처리 실행
-    batch_matcher = BatchMatcher(api_key)
+    batch_matcher = BatchMatcher(api_key, query=args.query)
+
+    # 수집된 공고 가져오기
+    job_ids = batch_matcher.get_collected_jobs()
+
+    if not job_ids:
+        logger.error("❌ 수집된 공고가 없습니다.")
+        logger.info(f"먼저 공고를 수집하세요: python collector.py --query \"{args.query}\"")
+        sys.exit(1)
+
+    # 분석 시작
     batch_matcher.process_batch(job_ids)
 
 
