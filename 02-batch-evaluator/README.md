@@ -2,25 +2,14 @@
 
 > 단일 공고 분석을 넘어, 여러 공고를 자동으로 처리하고 시스템의 정확도를 측정합니다.
 
-## 💡 01-basic-matcher와의 차이점
+## 💡 02-batch-evaluator
 
-### 01-basic-matcher
-- 수동으로 공고 ID 입력
-- 한 번에 하나씩 분석
-- "잘 되는 것 같다"는 느낌
+**프로덕션 레벨의 배치 분석 & 평가 시스템 - "돌아간다" → "쓸만하다"로 전환**
 
-### 02-batch-evaluator
-- 여러 공고 자동 배치 처리
-- 에러 핸들링 & 재시도
-- **정량적 평가**: "실제로 얼마나 정확한가?"
-
-## 🎯 핵심 목표
-
-**"돌아간다" → "쓸만하다"로 전환**
-
-1. **Evaluation 시스템**: 매칭 정확도를 측정하고 문서화
-2. **배치 자동화**: 여러 공고를 안정적으로 처리
-3. **에러 핸들링**: 실패를 다루는 프로덕션 레벨 설계
+1. **2단계 파이프라인**: 수집과 분석 분리로 독립 실행 및 재처리 가능
+2. **정량적 평가 시스템 (Evaluation)**: 매칭 정확도를 측정하고 문서화
+3. **에러 핸들링 & 재시도**: 실패를 다루는 프로덕션 레벨 설계
+4. **Logging & 모듈화**: 관측 가능한 시스템 구조
 
 ## 🔄 시스템 흐름도
 
@@ -35,16 +24,19 @@
 ─────────────────────────────────────
 data/{query}/ 읽기
     ↓
-각 공고 분석 (Gemini API)
-    ├─ 요구사항 추출
-    └─ 스킬 매칭 분석
+각 공고 분석 (LLM API)
+    ├─ 요구사항 추출 (Function Calling: get_job_detail)
+    └─ 스킬 매칭 분석 (Structured Output: JSON Schema)
     ↓
 중복 체크 (이미 분석됨 → 스킵)
     ↓
-실패 시 재시도 로직 (TODO)
-    ├─ Retry with exponential backoff
-    ├─ Rate limiting 처리
-    └─ 최종 실패 시 로그
+실패 시 재시도 로직 ✅
+    ├─ Rate limit 감지 (429 RESOURCE_EXHAUSTED)
+    ├─ API 제안 delay 우선 사용 (예: 48초)
+    ├─ Exponential backoff (2초 → 4초 → 8초)
+    ├─ 최대 3번 재시도
+    ├─ 최종 실패 시 로그 기록
+    └─ (예정) 다른 LLM 모델로 Fallback
     ↓
 output/{query}/job_*_analyzed.json 저장
 
@@ -96,10 +88,12 @@ python evaluate.py --test-set evaluation/test_jobs.json
 #   이유: 경력 요구사항 과대평가
 ```
 
-### 3. 에러 핸들링
-- API 실패 시 자동 재시도 (exponential backoff)
-- Rate limiting 처리
-- 중복 분석 방지 (캐싱)
+### 3. 에러 핸들링 ✅
+- **Exponential Backoff**: 2초 → 4초 → 8초 (최대 60초)
+- **Rate Limit 감지**: 429 에러 자동 인식
+- **API 제안 Delay 우선**: 응답의 retry delay 사용
+- **최대 3번 재시도**: 재시도 후에도 실패 시 에러 기록
+- **중복 분석 방지**: 파일 존재 여부로 캐싱
 
 ### 4. 자동 스케줄링
 ```bash
@@ -139,8 +133,8 @@ python scheduler.py --cron "0 9 * * *"
 ├── batch_matcher.py           # 2단계: 공고 분석
 ├── matcher.py                 # 단일 공고 분석 로직
 ├── models.py                  # 데이터 모델
+├── retry_handler.py           # 재시도 로직 (Exponential Backoff)
 ├── scheduler.py               # 자동 스케줄링 (TODO)
-├── retry_handler.py           # 재시도 로직 (TODO)
 ├── slack_notifier.py          # Slack 알림 (TODO)
 ├── evaluation/                # (TODO)
 │   ├── evaluate.py            # Evaluation 실행
@@ -178,16 +172,26 @@ python scheduler.py --cron "0 9 * * *"
 }
 ```
 
-### 2. 재시도 로직 (Exponential Backoff)
+### 2. 재시도 로직 (Exponential Backoff) ✅
 ```python
-@retry(
-    stop=stop_after_attempt(3),
-    wait=wait_exponential(multiplier=1, min=2, max=10)
-)
-def analyze_job(job_id):
-    # API 호출
+# retry_handler.py - 구현 완료
+@retry_with_backoff
+def extract_requirements(self, job_id: str):
+    # LLM API 호출 (현재: Gemini, 실패 시 다른 모델로 Fallback 예정)
+    # - 429 에러 시 자동 재시도
+    # - API 제안 delay 우선 (예: "retry in 48s")
+    # - 없으면 exponential backoff: 2초 → 4초 → 8초
+    # - 최대 3번 시도
+    # - 최종 실패 시 다른 LLM 모델로 전환 가능
     pass
 ```
+
+**주요 기능**:
+- Rate limit 에러 자동 감지 (429, RESOURCE_EXHAUSTED 등)
+- API 응답에서 retry delay 자동 추출 (정규표현식)
+- Exponential backoff: `2^(attempt-1) × 2초`
+- 최대 재시도 횟수 및 최대 대기 시간 설정 가능
+- **다중 모델 Fallback 전략**: 재시도 실패 시 다른 LLM으로 전환 (예정)
 
 ### 3. 회귀 테스트
 ```python

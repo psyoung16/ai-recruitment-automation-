@@ -5,6 +5,7 @@ from google import genai
 from models import JobRequirement, MatchResult
 from config import MY_PROFILE, GEMINI_MODEL
 from api import get_job_detail
+from retry_handler import retry_with_backoff
 
 # JSON 응답 스키마 정의
 REQUIREMENT_SCHEMA = {
@@ -36,6 +37,7 @@ class JobMatcher:
         self.client = genai.Client(api_key=api_key)
         self.tools = [get_job_detail]
 
+    @retry_with_backoff
     def extract_requirements(self, job_id: str) -> JobRequirement:
         """공고에서 요구사항 추출"""
         response = self.client.models.generate_content(
@@ -52,6 +54,7 @@ class JobMatcher:
 
         return JobRequirement.model_validate_json(response.text)
 
+    @retry_with_backoff
     def match_profile(self, job_requirement: JobRequirement) -> MatchResult:
         """프로필과 매칭 분석"""
         match_prompt = f"""
