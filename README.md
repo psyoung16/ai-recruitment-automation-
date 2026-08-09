@@ -89,45 +89,39 @@ ai-job-matcher/
 
 ---
 
-## 📋 단계별 로드맵
+## 📋 단계별 구현 계획
 
-### **02-batch-scanner** (다음 단계)
+### **02-batch-evaluator** (다음 단계)
 ```
-배치 자동화 + 기본 모니터링 + 에러 핸들링
+배치 자동화 + Evaluation 시스템
 ├── 재시도 로직 & 에러 핸들링
-├── 자동 스케줄링 (cron/scheduler)
 ├── 중복 분석 방지
-├── Slack 알림 연동
-├── 평가(Evaluation) 시스템 구축
-└── Grafana + Prometheus 모니터링
-    ├── API 호출 메트릭
-    ├── 성공률/실패율 추적
-    ├── 응답 시간 모니터링
-    └── 비용(토큰 사용량) 추적
+├── 자동 스케줄링 (cron/scheduler)
+├── Evaluation 시스템 구축 ⭐
+│   ├── 지원할/안할 공고 테스트셋 구축
+│   ├── 매칭 점수 정확도 측정
+│   └── 회귀 테스트 자동화
+└── Slack 알림 연동
 ```
 
-### **03-multi-platform** (확장 단계)
+### **03-monitoring** (관측 단계)
 ```
-멀티 플랫폼 + 비즈니스 인사이트 + 동적 Reasoning
+모니터링 + 멀티 플랫폼
+├── Grafana + Prometheus
+│   ├── API 호출 메트릭
+│   ├── 성공률/실패율 추적
+│   └── 비용(토큰 사용량) 추적
 ├── 여러 플랫폼 크롤링 (사람인, 잡코리아)
-├── 데이터 파이프라인 (Airbyte)
-├── DB 기반 데이터 관리
-├── 진짜 Multi-step Reasoning (동적 경로 선택)
-├── PDF 기반 프로필 분석 (RAGFlow MCP)
-└── Superset BI 대시보드
-    ├── 매칭 점수 분포 분석
-    ├── 스킬 트렌드 시각화
-    ├── 추천 공고 목록
-    └── 실험 결과 분석
+└── DB 기반 데이터 관리
 ```
 
-### **04-advanced** (선택사항)
+### **04-advanced** (확장 단계)
 ```
-고급 관측 & 최적화
-├── ELK Stack 로그 분석
-├── Agent 추론 과정 trace
-├── 품질 평가(Evals) 자동화
-└── MLOps 파이프라인
+동적 Reasoning + 고급 분석
+├── 진짜 Multi-step Reasoning (동적 경로 선택)
+├── Superset BI 대시보드
+├── PDF 기반 프로필 분석 (RAGFlow MCP)
+└── ELK Stack (선택사항)
 ```
 
 ---
