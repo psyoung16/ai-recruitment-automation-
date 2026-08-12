@@ -137,10 +137,14 @@ ai-job-matcher/
 
 ### **03-monitoring** (다음 단계)
 ```
-실시간 모니터링 시스템
+실시간 모니터링 + 인프라 구축
+├── Docker Compose (전체 시스템 컨테이너화)
+├── Redis (공고 데이터 캐싱)
+├── PostgreSQL (분석 결과 저장)
 ├── Grafana + Prometheus
 │   ├── API 호출 메트릭 (성공/실패율, 응답시간)
 │   ├── LLM 메트릭 (토큰 사용량, 비용, Fallback 비율)
+│   ├── Evaluation 메트릭 (Accuracy, Precision, Recall 추이)
 │   └── 비즈니스 메트릭 (매칭 점수 분포, 추천 비율)
 ├── 구조화된 JSON 로깅
 └── 알림 시스템 (Alertmanager)
@@ -149,16 +153,35 @@ ai-job-matcher/
 ### **04-advanced** (확장 단계)
 ```
 BI 분석 + 워크플로우 자동화
-├── Superset
+├── Superset (BI 대시보드)
 │   ├── 기술 스택 트렌드 분석 (SQL 기반)
 │   ├── 매칭 패턴 발견 및 인사이트
 │   └── 월별/요일별 추천 공고 분석
 ├── n8n (워크플로우 자동화)
 │   └── 공고 수집 → 분석 → Slack 알림 파이프라인
-├── Airbyte (멀티 플랫폼 데이터 파이프라인)
-│   └── 원티드/사람인 → PostgreSQL
-└── RAGFlow (선택)
-    └── PDF 이력서 분석 및 RAG 파이프라인
+└── Airbyte (선택)
+    └── 멀티 플랫폼 데이터 파이프라인 (원티드/사람인 → PostgreSQL)
+```
+
+### **05-rag-system** (선택 - RAG 파이프라인)
+```
+옵션 A: RAGFlow 활용
+├── RAGFlow 설치 및 설정
+├── PDF 이력서 업로드 및 지식베이스 구축
+├── GUI 기반 RAG 파이프라인 관리
+└── 공고-이력서 매칭 테스트
+
+옵션 B: 직접 구현
+├── PDF 파싱 (PyPDF2, LlamaParse)
+├── 텍스트 청킹 전략 구현
+├── 벡터 DB (ChromaDB/Weaviate/Pinecone)
+├── 임베딩 생성 (OpenAI/Sentence Transformers)
+├── 유사도 기반 경험 검색
+└── 공고-이력서 고급 매칭 시스템
+
+옵션 C: 하이브리드 (추천)
+├── RAGFlow로 프로토타입 구축
+└── 핵심 로직만 직접 구현 및 커스터마이징
 ```
 
 ---
