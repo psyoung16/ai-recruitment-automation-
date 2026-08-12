@@ -91,7 +91,7 @@ class BatchMatcher:
                 "requirement": job_requirement.model_dump(),
                 "match_result": match_result.model_dump(),
                 "recommended": is_recommended,
-                "model": GEMINI_MODEL,
+                "model": self.matcher.last_used_model,  # 실제 사용된 모델
                 "profile": MY_PROFILE
             }
 

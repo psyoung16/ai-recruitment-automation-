@@ -5,6 +5,7 @@ wanted_api_example.json
 
 # 기타 제외할 패턴들 (필요시)
 *.log
+*.jsonl
 *.tmp
 node_modules/
 __pycache__/
@@ -16,3 +17,7 @@ venv/
 *.env
 *.idea
 output/
+
+# Claude Code
+.claude/
+.claude_code/
