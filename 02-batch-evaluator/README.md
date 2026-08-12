@@ -30,13 +30,11 @@ data/{query}/ 읽기
     ↓
 중복 체크 (이미 분석됨 → 스킵)
     ↓
-실패 시 재시도 로직 ✅
-    ├─ Rate limit 감지 (429 RESOURCE_EXHAUSTED)
-    ├─ API 제안 delay 우선 사용 (예: 48초)
-    ├─ Exponential backoff (2초 → 4초 → 8초)
-    ├─ 최대 3번 재시도
-    ├─ 최종 실패 시 로그 기록
-    └─ (예정) 다른 LLM 모델로 Fallback
+실패 시 자동 복구 ✅
+    ├─ Rate limit(429) → 즉시 Fallback 모델 전환
+    └─ 일반 에러 → 재시도 후 Fallback 전환
+        ├─ Exponential backoff (2초→4초→8초)
+        └─ 최대 3번 재시도
     ↓
 output/{query}/job_*_analyzed.json 저장
 
@@ -89,11 +87,9 @@ python evaluate.py --test-set evaluation/test_jobs.json
 ```
 
 ### 3. 에러 핸들링 ✅
-- **Exponential Backoff**: 2초 → 4초 → 8초 (최대 60초)
-- **Rate Limit 감지**: 429 에러 자동 인식
-- **API 제안 Delay 우선**: 응답의 retry delay 사용
-- **최대 3번 재시도**: 재시도 후에도 실패 시 에러 기록
-- **중복 분석 방지**: 파일 존재 여부로 캐싱
+- **자동 재시도**: Exponential backoff (2초→4초→8초)
+- **Fallback LLM 전환**: Primary 실패 시 다른 모델로 자동 전환
+- **중복 분석 방지**: 이미 처리된 공고는 자동 스킵
 
 ### 4. 자동 스케줄링
 ```bash
@@ -117,42 +113,17 @@ python scheduler.py --cron "0 9 * * *"
 
 ```
 02-batch-evaluator/
-├── README.md
-├── api/                       # 외부 API 모듈
-│   ├── __init__.py
-│   ├── wanted_list_api.py     # 공고 목록 검색
-│   └── wanted_detail_api.py   # 공고 상세 조회
-├── config/                    # 설정 모듈
-│   ├── __init__.py
-│   ├── settings.py            # 프로필, 임계값 등
-│   └── logger.py              # 로깅 설정
-├── utils/                     # 유틸리티 모듈
-│   ├── __init__.py
-│   └── file_handler.py        # 파일 저장
 ├── collector.py               # 1단계: 공고 수집
 ├── batch_matcher.py           # 2단계: 공고 분석
-├── matcher.py                 # 단일 공고 분석 로직
-├── models.py                  # 데이터 모델
-├── retry_handler.py           # 재시도 로직 (Exponential Backoff)
-├── scheduler.py               # 자동 스케줄링 (TODO)
-├── slack_notifier.py          # Slack 알림 (TODO)
-├── evaluation/                # (TODO)
-│   ├── evaluate.py            # Evaluation 실행
-│   ├── test_jobs.json         # 테스트셋
-│   └── metrics.py             # 정확도 계산
-├── data/                      # 수집된 원본 공고
-│   ├── 백엔드/
-│   │   └── job_*.json
-│   └── AI/
-│       └── job_*.json
-├── output/                    # 분석 결과
-│   ├── 백엔드/
-│   │   └── job_*_analyzed.json
-│   └── AI/
-│       └── job_*_analyzed.json
+├── matcher.py                 # LLM 모델 조율 (Primary ↔ Fallback)
+├── retry_handler.py           # 재시도 로직
+├── api/                       # 원티드 API
+├── llm/                       # LLM 어댑터 (gemini, openai)
+├── config/                    # 설정 & 로깅
+├── evaluation/                # 평가 시스템 (TODO)
+├── data/                      # 수집된 공고 (*.json)
+├── output/                    # 분석 결과 (*_analyzed.json)
 └── logs/                      # 실행 로그
-    ├── collector.log
-    └── batch_matcher.log
 ```
 
 ## 🎓 핵심 학습 포인트
@@ -172,28 +143,7 @@ python scheduler.py --cron "0 9 * * *"
 }
 ```
 
-### 2. 재시도 로직 (Exponential Backoff) ✅
-```python
-# retry_handler.py - 구현 완료
-@retry_with_backoff
-def extract_requirements(self, job_id: str):
-    # LLM API 호출 (현재: Gemini, 실패 시 다른 모델로 Fallback 예정)
-    # - 429 에러 시 자동 재시도
-    # - API 제안 delay 우선 (예: "retry in 48s")
-    # - 없으면 exponential backoff: 2초 → 4초 → 8초
-    # - 최대 3번 시도
-    # - 최종 실패 시 다른 LLM 모델로 전환 가능
-    pass
-```
-
-**주요 기능**:
-- Rate limit 에러 자동 감지 (429, RESOURCE_EXHAUSTED 등)
-- API 응답에서 retry delay 자동 추출 (정규표현식)
-- Exponential backoff: `2^(attempt-1) × 2초`
-- 최대 재시도 횟수 및 최대 대기 시간 설정 가능
-- **다중 모델 Fallback 전략**: 재시도 실패 시 다른 LLM으로 전환 (예정)
-
-### 3. 회귀 테스트
+### 2. 회귀 테스트
 ```python
 # 프롬프트 변경 전후 비교
 python evaluate.py --compare baseline_v1 current_v2
@@ -207,13 +157,19 @@ python evaluate.py --compare baseline_v1 current_v2
 
 ### 1. 패키지 설치
 ```bash
-pip install google-genai python-dotenv requests pydantic tenacity schedule slack-sdk
+pip install google-genai openai python-dotenv requests pydantic tenacity schedule slack-sdk
 ```
 
 ### 2. 환경변수 설정
-```
-GEMINI_API_KEY=your_api_key
-SLACK_WEBHOOK_URL=your_slack_webhook  # (선택사항)
+```bash
+# Primary 모델 (Gemini)
+GEMINI_API_KEY=your_gemini_api_key
+
+# Fallback 모델 (OpenAI) - 선택사항
+OPENAI_API_KEY=your_openai_api_key
+
+# Slack 알림 (TODO) - 선택사항
+SLACK_WEBHOOK_URL=your_slack_webhook
 ```
 
 ### 3. 공고 수집
@@ -289,3 +245,4 @@ python evaluation/evaluate.py --query "백엔드"
 ✅ **에러 핸들링**: 재시도 로직, Rate limiting
 ✅ **배치 처리**: 대량 데이터 안정적 처리
 ✅ **"돌아간다"와 "쓸만하다"의 차이를 측정하고 개선**
+
