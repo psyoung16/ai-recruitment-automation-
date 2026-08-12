@@ -11,6 +11,14 @@ from typing import List
 from dotenv import load_dotenv
 from matcher import JobMatcher
 from config import MATCH_THRESHOLD, GEMINI_MODEL, MY_PROFILE, setup_logger
+from monitoring.metrics import (
+    jobs_analyzed_total,
+    job_matching_score,
+    jobs_recommended_total,
+    jobs_processing,
+    batch_jobs_running
+)
+from monitoring.db import save_analyzed_job
 
 # .env 파일 로드
 load_dotenv()
@@ -46,15 +54,32 @@ class BatchMatcher:
         logger.info(f"📁 수집된 공고: {len(job_ids)}개 ({self.data_dir})")
         return job_ids
 
+    def get_job_detail(self, job_id: str) -> dict:
+        """공고 상세 정보 읽기"""
+        job_file = self.data_dir / f"job_{job_id}.json"
+        if not job_file.exists():
+            return {}
+
+        try:
+            with open(job_file, 'r', encoding='utf-8') as f:
+                return json.load(f)
+        except Exception as e:
+            logger.warning(f"공고 파일 읽기 실패 ({job_id}): {e}")
+            return {}
+
     def process_job(self, job_id: str) -> dict:
         """단일 공고 분석"""
         logger.info(f"\n{'=' * 60}")
         logger.info(f"📋 공고 ID {job_id} 분석 중...")
         logger.info('=' * 60)
 
+        # 처리 중인 공고 수 증가
+        jobs_processing.inc()
+
         # 중복 체크
         if self.is_analyzed(job_id):
             logger.info(f"⏭️  이미 분석됨: {job_id}")
+            jobs_processing.dec()
             return {
                 "job_id": job_id,
                 "status": "skipped",
@@ -62,6 +87,11 @@ class BatchMatcher:
             }
 
         try:
+            # 공고 상세 정보 읽기
+            job_detail = self.get_job_detail(job_id)
+            company = job_detail.get('data', {}).get('job', {}).get('company', {}).get('name', '')
+            position = job_detail.get('data', {}).get('job', {}).get('detail', {}).get('position', '')
+
             # 1. 분석
             logger.info("🔍 공고 분석 중...")
             job_requirement, match_result = self.matcher.analyze(job_id)
@@ -101,6 +131,35 @@ class BatchMatcher:
 
             logger.info(f"✅ 저장 완료: {saved_path}")
 
+            # DB에 저장
+            logger.info("💾 DB에 저장 중...")
+            db_saved = save_analyzed_job(
+                job_id=job_id,
+                query=self.query,
+                company=company,
+                position=position,
+                score=match_result.score,
+                recommended=is_recommended,
+                matched_skills=match_result.matched_skills,
+                missing_skills=match_result.missing_skills,
+                reason=match_result.reason,
+                model=self.matcher.last_used_model
+            )
+
+            if db_saved:
+                logger.info("✅ DB 저장 완료")
+            else:
+                logger.warning("⚠️  DB 저장 실패 (계속 진행)")
+
+            # 메트릭 기록
+            jobs_analyzed_total.labels(query=self.query).inc()
+            job_matching_score.labels(query=self.query).observe(match_result.score)
+            if is_recommended:
+                jobs_recommended_total.labels(query=self.query).inc()
+
+            # 처리 중인 공고 수 감소
+            jobs_processing.dec()
+
             return {
                 "job_id": job_id,
                 "status": "success",
@@ -111,6 +170,7 @@ class BatchMatcher:
 
         except Exception as e:
             logger.error(f"\n❌ 에러 발생: {str(e)}", exc_info=True)
+            jobs_processing.dec()
             return {
                 "job_id": job_id,
                 "status": "failed",
@@ -123,11 +183,17 @@ class BatchMatcher:
         logger.info(f"📂 출력 위치: {self.output_dir}")
         logger.info("=" * 60)
 
+        # 배치 작업 시작
+        batch_jobs_running.inc()
+
         results = []
         for idx, job_id in enumerate(job_ids, 1):
             logger.info(f"\n진행: [{idx}/{len(job_ids)}]")
             result = self.process_job(job_id)
             results.append(result)
+
+        # 배치 작업 완료
+        batch_jobs_running.dec()
 
         # 요약 출력
         self._print_summary(results)
