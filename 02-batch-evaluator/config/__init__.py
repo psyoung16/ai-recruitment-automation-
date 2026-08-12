@@ -1,7 +1,7 @@
 """
 설정 모듈
 """
-from .settings import MY_PROFILE, MATCH_THRESHOLD, GEMINI_MODEL
+from .settings import MY_PROFILE, MATCH_THRESHOLD, GEMINI_MODEL, FALLBACK_MODEL_NAME, FALLBACK_API_KEY_ENV, USE_FALLBACK
 from .logger import setup_logger
 
-__all__ = ['MY_PROFILE', 'MATCH_THRESHOLD', 'GEMINI_MODEL', 'setup_logger']
+__all__ = ['MY_PROFILE', 'MATCH_THRESHOLD', 'GEMINI_MODEL', 'FALLBACK_MODEL_NAME', 'FALLBACK_API_KEY_ENV', 'USE_FALLBACK', 'setup_logger']

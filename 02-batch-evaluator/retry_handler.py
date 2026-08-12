@@ -10,6 +10,41 @@ from config import setup_logger
 logger = setup_logger('retry_handler', log_file='logs/retry_handler.log')
 
 
+class RateLimitError(Exception):
+    """
+    Rate limit 에러 발생 시 즉시 발생하는 예외
+
+    재시도하지 않고 바로 fallback 모델로 전환해야 함
+    """
+    def __init__(self, original_error: Exception, function_name: str):
+        self.original_error = original_error
+        self.function_name = function_name
+        super().__init__(
+            f"{function_name} hit rate limit: {str(original_error)}"
+        )
+
+    def __str__(self):
+        return f"RateLimit[{self.function_name}]: {str(self.original_error)[:200]}"
+
+
+class RetryExhaustedError(Exception):
+    """
+    재시도를 모두 소진한 경우 발생하는 예외
+
+    이 예외가 발생하면 fallback 모델로 전환을 고려해야 함
+    """
+    def __init__(self, original_error: Exception, attempts: int, function_name: str):
+        self.original_error = original_error
+        self.attempts = attempts
+        self.function_name = function_name
+        super().__init__(
+            f"{function_name} failed after {attempts} retry attempts: {str(original_error)}"
+        )
+
+    def __str__(self):
+        return f"RetryExhausted[{self.function_name}, {self.attempts}회 시도]: {str(self.original_error)}"
+
+
 class RetryConfig:
     """재시도 설정"""
     MAX_ATTEMPTS = 3  # 최대 재시도 횟수
@@ -106,27 +141,37 @@ def retry_with_backoff(func: Callable) -> Callable:
             except Exception as e:
                 last_exception = e
 
-                # Rate limit 에러가 아니면 즉시 재발생
-                if not is_rate_limit_error(e):
-                    logger.error(f"❌ {func.__name__} 실패 (재시도 불가능한 에러): {str(e)}")
-                    raise
+                # Rate limit 에러면 재시도 없이 즉시 RateLimitError 발생
+                if is_rate_limit_error(e):
+                    logger.warning(
+                        f"⚠️  {func.__name__} Rate limit 감지 → 재시도 없이 Fallback으로 전환\n"
+                        f"   에러: {str(e)[:200]}"
+                    )
+                    raise RateLimitError(
+                        original_error=e,
+                        function_name=func.__name__
+                    )
 
-                # 마지막 시도였으면 재발생
+                # Rate limit 외 다른 에러는 재시도
+                # 마지막 시도였으면 RetryExhaustedError 발생
                 if attempt >= RetryConfig.MAX_ATTEMPTS:
                     logger.error(
                         f"❌ {func.__name__} 최종 실패 "
                         f"({RetryConfig.MAX_ATTEMPTS}번 시도 후 포기): {str(e)}"
                     )
-                    raise
+                    raise RetryExhaustedError(
+                        original_error=e,
+                        attempts=RetryConfig.MAX_ATTEMPTS,
+                        function_name=func.__name__
+                    )
 
                 # Retry delay 계산
-                suggested_delay = extract_retry_delay(e)
-                delay = calculate_backoff_delay(attempt, suggested_delay)
+                delay = calculate_backoff_delay(attempt)
 
                 logger.warning(
-                    f"⚠️  {func.__name__} Rate limit 발생 (시도 {attempt}/{RetryConfig.MAX_ATTEMPTS})\n"
+                    f"⚠️  {func.__name__} 일시적 에러 발생 (시도 {attempt}/{RetryConfig.MAX_ATTEMPTS})\n"
                     f"   에러: {str(e)[:200]}\n"
-                    f"   {'API 제안 대기 시간' if suggested_delay > 0 else '계산된 대기 시간'}: {delay:.2f}초\n"
+                    f"   대기 시간: {delay:.2f}초\n"
                     f"   {delay:.2f}초 후 재시도..."
                 )
 
