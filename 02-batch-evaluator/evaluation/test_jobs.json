@@ -1,0 +1,192 @@
+{
+  "_note": "Java 백엔드 개발자(3년차) 관점에서 평가한 Ground Truth",
+  "_reference_profile": {
+    "languages": ["Java"],
+    "frameworks": ["Spring Boot", "Spring MVC"],
+    "databases": ["MySQL", "PostgreSQL"],
+    "experience_years": 3,
+    "tools": ["Git", "Docker"],
+    "interests": ["백엔드 API 개발", "MSA"]
+  },
+
+  "apply": [
+    {
+      "job_id": "284183",
+      "company": "코드잇",
+      "position": "백엔드 엔지니어",
+      "url": "https://www.wanted.co.kr/wd/284183",
+      "label_reason": "Kotlin+Spring Webflux 사용. '현재 스택에 맞지 않아도 괜찮아요, 빠르게 배우고 열정 있는 백엔드 엔지니어라면 지원해보세요' 문구 존재",
+      "my_expected_score": 75,
+      "key_match": [
+        "Spring Webflux (Spring 계열)",
+        "Kubernetes (MSA 관심)",
+        "AWS EKS",
+        "GraphQL API",
+        "스택 무관, 신입/경력 무관 환영"
+      ],
+      "concerns": [
+        "Kotlin 주력 (Java만 경험)",
+        "MongoDB 사용 (RDBMS만 경험)",
+        "교육 도메인 (관심 도메인 아님)"
+      ]
+    },
+    {
+      "job_id": "300610",
+      "company": "와탭랩스",
+      "position": "백엔드 개발자",
+      "url": "https://www.wanted.co.kr/wd/300610",
+      "label_reason": "Spring Framework, JPA, RDBMS 사용. IT 인프라 모니터링 솔루션 개발",
+      "my_expected_score": 80,
+      "key_match": [
+        "Spring Framework",
+        "Spring Security",
+        "JPA",
+        "RDBMS, NoSQL",
+        "Linux 환경"
+      ],
+      "concerns": [
+        "인프라 지식 요구 (OS, 네트워크, 파일시스템)"
+      ]
+    }
+  ],
+
+  "borderline": [
+    {
+      "job_id": "231846",
+      "company": "위레이저",
+      "position": "백엔드 개발자",
+      "url": "https://www.wanted.co.kr/wd/231846",
+      "label_reason": "Spring Boot/Java 11+ 사용하지만, AI 에이전트 개발 업무 포함. 백엔드 개발과 AI 업무 병행",
+      "my_expected_score": 60,
+      "pros": [
+        "Spring Boot 2.0+",
+        "Java 11+",
+        "MySQL/PostgreSQL",
+        "RESTful API",
+        "3년 경력 요구"
+      ],
+      "cons": [
+        "AI 에이전트 개발 경험 없음",
+        "머신러닝 관련 경험 없음",
+        "하드웨어 도메인 생소"
+      ]
+    },
+    {
+      "job_id": "359638",
+      "company": "에이블리코퍼레이션",
+      "position": "백엔드 엔지니어",
+      "url": "https://www.wanted.co.kr/wd/359638",
+      "label_reason": "Django, Spring 둘 다 사용. 하지만 'Django와 DRF에 익숙하신 분이면 좋아요' 우대사항 명시",
+      "my_expected_score": 65,
+      "pros": [
+        "Spring 사용 (Kotlin/Spring)",
+        "3년 경력 요구 일치",
+        "이커머스 도메인",
+        "MySQL 사용"
+      ],
+      "cons": [
+        "Django/DRF 우대 (Python 미경험)",
+        "Python 주력으로 보임",
+        "클라우드(AWS, GCP) 경험 우대"
+      ]
+    },
+    {
+      "job_id": "379010",
+      "company": "뉴메스",
+      "position": "백엔드 개발자",
+      "url": "https://www.wanted.co.kr/wd/379010",
+      "label_reason": "Java/Spring Boot 사용하지만, 경력 5년 이상 요구 (3년차는 부족)",
+      "my_expected_score": 55,
+      "pros": [
+        "Java/Spring Boot 기반",
+        "WebSocket 실시간 통신",
+        "REST API"
+      ],
+      "cons": [
+        "경력 5년 이상 요구 (3년차는 2년 부족)",
+        "실시간 통신 경험 부족",
+        "HA 아키텍처 경험 부족"
+      ]
+    },
+    {
+      "job_id": "380102",
+      "company": "핀다",
+      "position": "백엔드 개발자",
+      "url": "https://www.wanted.co.kr/wd/380102",
+      "label_reason": "Spring 기반 백엔드지만 경력 4년 이상 요구 (3년차는 1년 부족)",
+      "my_expected_score": 60,
+      "pros": [
+        "Spring 기반",
+        "안정성/확장성 고려",
+        "시스템 성능 개선"
+      ],
+      "cons": [
+        "경력 4년 이상 요구 (3년차는 1년 부족)",
+        "핀테크 도메인 경험 부족"
+      ]
+    },
+    {
+      "job_id": "332282",
+      "company": "핀다",
+      "position": "백엔드 개발자",
+      "url": "https://www.wanted.co.kr/wd/332282",
+      "label_reason": "기술스택 명시 없음. 일반적인 백엔드 역량만 기술되어 있어 판단 어려움",
+      "my_expected_score": 50,
+      "pros": [
+        "서비스 운영 경험",
+        "아키텍처 설계/구현",
+        "협업 중시"
+      ],
+      "cons": [
+        "구체적인 기술스택 불명확",
+        "경력 요구사항 불명확"
+      ]
+    }
+  ],
+
+  "no_apply": [
+    {
+      "job_id": "317126",
+      "company": "데일리펀딩",
+      "position": "백엔드 개발자",
+      "url": "https://www.wanted.co.kr/wd/317126",
+      "label_reason": "Python/Django Rest Framework 필수. Java 경험 없음",
+      "my_expected_score": 25,
+      "key_mismatch": [
+        "Python",
+        "Django Rest Framework",
+        "DRF 1년 이상 경력 필수"
+      ],
+      "why_not": "Python/Django 미경험"
+    },
+    {
+      "job_id": "374393",
+      "company": "공간의가치",
+      "position": "백엔드 엔지니어",
+      "url": "https://www.wanted.co.kr/wd/374393",
+      "label_reason": "Node.js/TypeScript/Nest.js 필수. Java 완전 불일치",
+      "my_expected_score": 15,
+      "key_mismatch": [
+        "Node.js",
+        "TypeScript",
+        "Nest.js 프레임워크",
+        "JavaScript 생태계"
+      ],
+      "why_not": "Node.js/TypeScript 미경험"
+    },
+    {
+      "job_id": "376799",
+      "company": "왓섭",
+      "position": "백엔드 개발자",
+      "url": "https://www.wanted.co.kr/wd/376799",
+      "label_reason": "Python 기반 백엔드. Java 경험 없음",
+      "my_expected_score": 20,
+      "key_mismatch": [
+        "Python",
+        "비동기 처리 (Python asyncio 등)",
+        "배치 처리 (Python 기반)"
+      ],
+      "why_not": "Python 미경험"
+    }
+  ]
+}

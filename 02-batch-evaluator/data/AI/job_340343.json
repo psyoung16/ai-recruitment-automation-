@@ -1,0 +1,231 @@
+{
+  "error_code": null,
+  "message": "ok",
+  "data": {
+    "application": null,
+    "job": {
+      "id": 340343,
+      "status": "active",
+      "due_time": null,
+      "detail": {
+        "id": 352138,
+        "position": "AI 솔루션 AI Engineer",
+        "intro": "저희 스카이월드와이드는 3D기반 생성형 AI 영상 제작 솔루션과 Graph Database기술을 보유한\nAI테크 기업으로써 파리에서 열린 유럽 최대 규모 테크 박람회 ‘VIVATECH’에서 \n‘3D 기반 생성형 AI를 활용한 영상 제작 기술’을 통해 ‘LVMH 이노베이션 어워드’ 대상(1위)을 받은\n원천기술을 보유하고 있으며 국내유일 Graph Database제품을 보유하고 있습니다.\n\n현재 LVMH산하 브랜드 및 국내 주요 대기업들과 생성형AI기술을 활용한 영상제작 솔루션을 기반으로\n비즈니스를 하고 있으며 향후 글로벌 기업들과 지속적으로 GenAI기술을 활용한 비즈니스를 확장할 계획입니다.\n또한 온톨로지 기반 데이터분석 통합플랫폼을 런칭하여 한국의 팔란티어와 같은 기업으로 도약하고자 합니다.\n\n스카이월드와이드와 함께 미래를 이끌어갈 도전적인 인재를 찾습니다.",
+        "main_tasks": "• ComfyUI 기반 프로젝트의 안정적인 운영 및 장애 대응\n• ComfyUI API 연동 및 자동화 파이프라인 구축\n• 생성형 이미지 AI 개발",
+        "requirements": "• ComfyUI 커스텀 노드 개발 및 워크플로우 최적화 경험이 있으신 분\n• ComfyUI API 연동 및 자동화 파이프라인 구축 경험이 있으신 분\n• Python FastAPI 실무 경험이 있으신 분",
+        "preferred_points": "• LangChain, LangGraph, LangFlow 등 AI Agent 프레임워크 구축 경험이 있으신 분\n• MCP(Model Context Protocol) 개발 경험이 있으신 분\n• 정보처리기사 또는 동등한 자격증 소지 하신 분\n• Git, JIRA 등 협업 도구 활용 및 프로젝트 문서화에 능숙하신 분",
+        "benefits": "• 점심식대(식권대장 포인트)\n• 각종 경조사 및 건강검진 지원\n• 업무에 필요한 장비 지원\n• 업무에 필요한 유료소프트웨어 지원",
+        "hire_rounds": "• 서류 -＞ 1차면접 -＞ 2차면접 -＞ 최종(연봉협상)"
+      },
+      "attraction_tags": [
+        {
+          "tag_type_id": 10439,
+          "title": "장비지원",
+          "kind_title": "ATTRACTION",
+          "tag_category_id": 7
+        },
+        {
+          "tag_type_id": 10436,
+          "title": "커피·스낵바",
+          "kind_title": "ATTRACTION",
+          "tag_category_id": 7
+        },
+        {
+          "tag_type_id": 10440,
+          "title": "편의시설",
+          "kind_title": "ATTRACTION",
+          "tag_category_id": 7
+        },
+        {
+          "tag_type_id": 10433,
+          "title": "자기계발지원",
+          "kind_title": "ATTRACTION",
+          "tag_category_id": 7
+        },
+        {
+          "tag_type_id": 10443,
+          "title": "사내동호회",
+          "kind_title": "ATTRACTION",
+          "tag_category_id": 8
+        },
+        {
+          "tag_type_id": 10423,
+          "title": "건강검진지원",
+          "kind_title": "ATTRACTION",
+          "tag_category_id": 7
+        },
+        {
+          "tag_type_id": 10437,
+          "title": "식대지원",
+          "kind_title": "ATTRACTION",
+          "tag_category_id": 7
+        },
+        {
+          "tag_type_id": 10427,
+          "title": "복지포인트",
+          "kind_title": "ATTRACTION",
+          "tag_category_id": 7
+        },
+        {
+          "tag_type_id": 10441,
+          "title": "수평적조직",
+          "kind_title": "ATTRACTION",
+          "tag_category_id": 8
+        },
+        {
+          "tag_type_id": 10399,
+          "title": "연봉상위11~20%",
+          "kind_title": "ATTRACTION",
+          "tag_category_id": 1
+        },
+        {
+          "tag_type_id": 10403,
+          "title": "51~300명",
+          "kind_title": "ATTRACTION",
+          "tag_category_id": 3
+        },
+        {
+          "tag_type_id": 10444,
+          "title": "자율복장",
+          "kind_title": "ATTRACTION",
+          "tag_category_id": 8
+        },
+        {
+          "tag_type_id": 10409,
+          "title": "설립10년이상",
+          "kind_title": "ATTRACTION",
+          "tag_category_id": 4
+        },
+        {
+          "tag_type_id": 10462,
+          "title": "워크샵",
+          "kind_title": "ATTRACTION",
+          "tag_category_id": 7
+        },
+        {
+          "tag_type_id": 10447,
+          "title": "유망산업",
+          "kind_title": "ATTRACTION",
+          "tag_category_id": 9
+        },
+        {
+          "tag_type_id": 10486,
+          "title": "AI 선도 기업",
+          "kind_title": "ATTRACTION",
+          "tag_category_id": 10
+        }
+      ],
+      "company": {
+        "id": 5866,
+        "name": "스카이월드와이드",
+        "industry_name": null,
+        "company_tags": [],
+        "logo_img": {
+          "origin": "https://static.wanted.co.kr/images/wdes/0_5.8c5cf024.png",
+          "thumb": "https://static.wanted.co.kr/images/wdes/0_4.8c5cf024.png"
+        },
+        "application_response_stats": {
+          "id": 1439,
+          "avg_day": null,
+          "avg_rate": 0.0,
+          "level": "very_low",
+          "reply_type": "applied_reply_done",
+          "target_count": 1937,
+          "remain_count_to_next": 4,
+          "company_id": 5866
+        },
+        "position_count": 2,
+        "highlight_tags": [],
+        "is_attractive_company": false
+      },
+      "address": {
+        "id": 40902,
+        "company_id": 5866,
+        "country": "한국",
+        "country_code": "kr",
+        "location": "서울",
+        "district": "강남구",
+        "i18n_country": "label.country.kr",
+        "i18n_location": "label.location.kr.seoul",
+        "i18n_district": "label.location.kr.seoul.gangnam-gu",
+        "full_location": "서울특별시 강남구 테헤란로 516 4층",
+        "geo_location": {
+          "bounds": null,
+          "location": {
+            "lat": 37.5073743,
+            "lng": 127.0600655
+          },
+          "location_type": "ROOFTOP",
+          "viewport": {
+            "northeast": {
+              "lat": 37.50872328029149,
+              "lng": 127.0614144802915
+            },
+            "southwest": {
+              "lat": 37.50602531970849,
+              "lng": 127.0587165197085
+            }
+          },
+          "n_location": {
+            "lat": 37.5074214,
+            "lng": 127.0600949,
+            "road_address": "서울특별시 강남구 테헤란로 516 정헌빌딩"
+          }
+        }
+      },
+      "reward": {
+        "id": 401860,
+        "wd_id": 340343,
+        "country": "KR",
+        "user_country": "KR",
+        "reward_recommender": 500000,
+        "reward_recommendee": 500000,
+        "reward_recommender_unit": "KRW",
+        "reward_recommendee_unit": "KRW",
+        "formatted_total": "100만원",
+        "formatted_recommender": "50만원",
+        "formatted_recommendee": "50만원"
+      },
+      "wpoint_reward": {
+        "wpoint_reward_recommender": 0,
+        "wpoint_reward_recommendee": 0
+      },
+      "category_tag": {
+        "parent_tag": {
+          "id": 518,
+          "text": "개발"
+        },
+        "child_tags": [
+          {
+            "id": 899,
+            "text": "파이썬 개발자"
+          },
+          {
+            "id": 1634,
+            "text": "머신러닝 엔지니어"
+          }
+        ]
+      },
+      "skill_tags": [],
+      "title_images": [
+        "https://static.wanted.co.kr/images/company/5866/dj2oyhdtuupu6gym__1080_790.png"
+      ],
+      "is_bookmark": false,
+      "is_company_follow": false,
+      "hidden": false,
+      "is_private": false,
+      "annual_to": 100,
+      "annual_from": 4,
+      "is_newbie": false,
+      "name": null,
+      "wanted_pick": null,
+      "out_link": null,
+      "is_extension_enabled": false,
+      "employment_type": "regular",
+      "additional_apply_type": null,
+      "employment_note": null,
+      "preferred_languages": null,
+      "visa_information": null
+    }
+  }
+}

@@ -1,0 +1,141 @@
+{
+  "error_code": null,
+  "message": "ok",
+  "data": {
+    "application": null,
+    "job": {
+      "id": 376799,
+      "status": "active",
+      "due_time": null,
+      "detail": {
+        "id": 388949,
+        "position": "백엔드 개발자",
+        "intro": "직접 돈을 관리하지 않아도 되는 세상을 만듭니다\n\n왓섭은 금융·소비 데이터와 AI를 기반으로, 사용자가 직접 돈을 관리하지 않아도 되는 세상을 만들어가는 금융 데이터 기업입니다.\n\n구독 관리 앱을 시작으로 사용자의 구독과 고정지출을 자동으로 찾아 관리해 왔으며, 현재는 마이데이터 본허가를 기반으로 소비와 금융생활 전반을 이해하고 관리하는 서비스로 확장하고 있습니다. 이러한 기술력과 서비스 경험을 바탕으로 재정경제부가 발표한 ‘생활밀착 서비스 개선방안’의 구독 내역 통합 조회·관리 서비스를 구현하고 있습니다.\n\n2026년 9월, 완전히 새로워질 왓섭의 출범을 앞두고 빠른 변화 속에서 주저 없이 실행하며 결과를 완성해갈 동료를 모십니다.\n\n[주요 성과]\no 2025 | 금융위원회 마이데이터 본허가 · 혁신금융서비스 지정\no 2024 | 해외법인 설립(미국) · 혁신금융서비스 지정 · ISO/IEC 27001 인증\no 2023 | Pre-A 추가 투자 유치(누적 28.5억 원) · 미국 금융사 연동 및 글로벌 앱 출시\no 2022 | 왓섭 실사용자 20만명 돌파 (누적 다운로드 수 29만)\no 2021 | 중소벤처기업부 · 과학기술정보통신부 장관상 3건 수상 (기술·사업화 검증)\no 2020 | 법인 설립 · 기업부설연구소 설립 · TIPS 선정\n\n[ 기사 ]\n∙ \"구독료 줄줄 새는데 몰랐다\" 9월부터 한눈에 확인…정부, 생활 밀착 서비스 대수술\n링크 | https://v.daum.net/v/uDBYaggRSP\n∙ “내가 뭘 결제하는지도 몰랐다”…9월부터 구독 내역 한눈에 확인된다\n링크 | https://news.jtbc.co.kr/article/NB12304055",
+        "main_tasks": "• Python 기반 서버 애플리케이션 개발 및 운영\n• 구독·결제·정산 등 금융 서비스 핵심 로직 설계 및 개발\n• 확장 가능하고 안정적인 백엔드 시스템 아키텍처 설계\n• RESTful API 설계 및 문서화, 외부 연동\n• API 버전 관리 및 서비스 규모 확장 대응\n• 코드 리팩토링과 성능 최적화를 통한 코드 품질 개선\n\n [기술환경]\n• Backend: Python, FastAPI\n• Database: PostgreSQL, DynamoDB, MySQL\n• Infrastructure: AWS Lambda, API Gateway, EventBridge, CloudWatch\n• Collaboration: Git, GitHub 또는 CodeCommit, Slack\n• AI Development: Claude Code, Codex, Gemini CLI 등\n현재 모든 기술에 익숙할 필요는 없으며, 유사한 환경에서의 경험과 빠른 학습 능력을 중요하게 평가합니다.",
+        "requirements": "• API 설계 및 개발 경험 : REST API를 설계하고 인증·인가, 예외 처리, 버전 관리 등을 고려하여 운영해 본 분\n• 비동기 및 배치 처리 경험 : 비동기 작업이나 배치 프로세스를 설계하고 운영해 본 분\n• 보안에 대한 기본 이해 : 개인정보 보호, 인증·인가, 민감정보 암호화, 로그 마스킹 등 백엔드 보안 원칙을 이해하고 적용할 수 있는 분\n• 결제·정산 시스템 개발 경험 : 결제, 정산, 트랜잭션 처리 등 금융 로직을 설계하거나 구현해 본 분\n• DB 설계 및 성능 최적화 경험 : JOIN, 인덱스 설계, 쿼리 튜닝 등을 통해 성능 문제를 직접 해결해 본 분\n• AI 활용 능력 : Claude Code, Codex, Gemini CLI, Cursor 등 AI 개발 도구를 활용하여 코드 작성, 분석, 테스트 및 문서화 업무의 생산성을 높여본 분\n• AI가 생성한 결과를 그대로 사용하지 않고, 정확성·보안·성능·유지보수성을 직접 검증할 수 있는 분\n• CS 기초 역량 : AI가 생성한 결과물의 품질을 판단하고 디버깅할 수 있는 기초적인 Computer Science 지식을 갖춘 분",
+        "preferred_points": "• 빠른 배포 환경 경험 : 스타트업 또는 빠른 배포 사이클에서 개발·운영해본 경험이 있는 분\n• 아키텍처 설계 경험 : 트래픽 증가 또는 서비스 확장 상황에서 구조를 설계하거나 개선해본 분\n• 에이전트 설계 경험 보유자 : LLM을 활용한 자동화 워크플로우나 에이전트 기반 시스템을 구축해 보신 분\n• 학습 및 실행 역량 : 처음 접하는 기술도 AI를 활용해 빠르게 학습하고, 짧은 시간 내 실무에 적용할 수 있는 분\n• 고객 문제 중심의 가치관 : ‘어떤 기술을 사용하는가’보다 ‘고객의 문제를 얼마나 빠르게 해결하는가’를 우선하는 분",
+        "benefits": "[왓섭에서는 이런 경험을 하게 됩니다]\n• 대규모 금융·소비 데이터를 안정적으로 처리하고, 실제 서비스에 적용하는 기술적 문제를 직접 해결합니다.\n• 구독·결제·정산 등 정확성과 안정성이 중요한 금융 서비스의 핵심 로직을 설계하고 구현합니다.\n• 단순 기능 개발을 넘어 문제 정의부터 기술 검토, 아키텍처 설계, 개발, 배포 및 개선까지 제품 개발 전반에 깊게 참여합니다.\n• 기획, 디자인과 가까운 거리에서 서비스 방향을 함께 논의하고, 기술적인 관점에서 해결 방법을 제안합니다.\n• 자신이 개발한 기능이 실제 사용자 경험과 서비스 변화로 이어지는 과정을 가까이에서 확인할 수 있습니다.\n• Claude Code, Codex, Gemini CLI 등 AI 개발 도구를 적극적으로 활용하며 개발 방식과 생산성을 함께 고도화합니다.",
+        "hire_rounds": "• 서류 ＞ 1차 실무 인터뷰 ＞ 2차 조직 적합성 인터뷰 ＞ 처우 협의 ＞ 최종 합격\n• 채용 절차는 내부 일정 및 상황에 따라 변동될 수 있습니다.\n• 필요 시 사전 동의 후 평판 조회가 진행될 수 있습니다.\n• 지원서에 허위 사실이 확인될 경우 합격이 취소될 수 있습니다.\n• 입사 후 3개월의 수습기간이 적용됩니다."
+      },
+      "attraction_tags": [
+        {
+          "tag_type_id": 10431,
+          "title": "스톡옵션",
+          "kind_title": "ATTRACTION",
+          "tag_category_id": 7
+        }
+      ],
+      "company": {
+        "id": 11673,
+        "name": "왓섭",
+        "industry_name": null,
+        "company_tags": [],
+        "logo_img": {
+          "origin": "https://static.wanted.co.kr/images/wdes/0_5.8a7508c4.png",
+          "thumb": "https://static.wanted.co.kr/images/wdes/0_4.8a7508c4.png"
+        },
+        "application_response_stats": {
+          "id": 69575,
+          "avg_day": null,
+          "avg_rate": 63.75,
+          "level": "low",
+          "reply_type": "applied_reply_done",
+          "target_count": 112,
+          "remain_count_to_next": null,
+          "company_id": 11673
+        },
+        "position_count": 2,
+        "highlight_tags": [],
+        "is_attractive_company": false
+      },
+      "address": {
+        "id": 10999,
+        "company_id": 11673,
+        "country": "한국",
+        "country_code": "kr",
+        "location": "서울",
+        "district": "영등포구",
+        "i18n_country": "label.country.kr",
+        "i18n_location": "label.location.kr.seoul",
+        "i18n_district": "label.location.kr.seoul.yeongdeungpo-gu",
+        "full_location": "서울 영등포구 당산로41길 11, 더블유동 8층 (당산동4가, 에스케이브이1센터)",
+        "geo_location": {
+          "bounds": null,
+          "location": {
+            "lat": 37.5308587,
+            "lng": 126.8982998
+          },
+          "location_type": "ROOFTOP",
+          "viewport": {
+            "northeast": {
+              "lat": 37.53220768029151,
+              "lng": 126.8996487802915
+            },
+            "southwest": {
+              "lat": 37.52950971970851,
+              "lng": 126.8969508197085
+            }
+          },
+          "n_location": {
+            "lat": 37.5308119,
+            "lng": 126.8983704,
+            "road_address": "서울특별시 영등포구 당산로41길 11 당산 SK V1 center"
+          }
+        }
+      },
+      "reward": {
+        "id": 439541,
+        "wd_id": 376799,
+        "country": "KR",
+        "user_country": "KR",
+        "reward_recommender": 500000,
+        "reward_recommendee": 500000,
+        "reward_recommender_unit": "KRW",
+        "reward_recommendee_unit": "KRW",
+        "formatted_total": "100만원",
+        "formatted_recommender": "50만원",
+        "formatted_recommendee": "50만원"
+      },
+      "wpoint_reward": {
+        "wpoint_reward_recommender": 0,
+        "wpoint_reward_recommendee": 0
+      },
+      "category_tag": {
+        "parent_tag": {
+          "id": 518,
+          "text": "개발"
+        },
+        "child_tags": [
+          {
+            "id": 872,
+            "text": "서버 개발자"
+          },
+          {
+            "id": 899,
+            "text": "파이썬 개발자"
+          }
+        ]
+      },
+      "skill_tags": [],
+      "title_images": [
+        "https://static.wanted.co.kr/images/company/11673/bkzeywntwlnbuddz__1080_790.jpg"
+      ],
+      "is_bookmark": false,
+      "is_company_follow": false,
+      "hidden": false,
+      "is_private": false,
+      "annual_to": 10,
+      "annual_from": 3,
+      "is_newbie": false,
+      "name": null,
+      "wanted_pick": null,
+      "out_link": null,
+      "is_extension_enabled": false,
+      "employment_type": "regular",
+      "additional_apply_type": null,
+      "employment_note": null,
+      "preferred_languages": null,
+      "visa_information": null
+    }
+  }
+}

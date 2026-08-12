@@ -1,0 +1,191 @@
+{
+  "error_code": null,
+  "message": "ok",
+  "data": {
+    "application": null,
+    "job": {
+      "id": 379010,
+      "status": "active",
+      "due_time": "2026-08-29T00:00:00",
+      "detail": {
+        "id": 391181,
+        "position": "백엔드 개발자",
+        "intro": "＜뉴메스팀 소개＞\n저희 뉴메스팀은, 연세대학교 공과대학 AI 연구교수 2명과 존스홉킨스대학교 AI 연구원 출신 인력들이 주축이 되어 2024년 6월 설립한 AX 전문 기업입니다. \n현재 한국, 미국, 중국, 캐나다 출신의 글로벌 AI 엔지니어 11명이 한 팀을 이루어, 기업이 직면한 산업 현장의 난제들을 온톨로지와 AI 기술로 해결해 나가고 있습니다. \n뉴메스팀이 즐겁게 일할 수 있는 동료를 찾고 있습니다!!!\n\n＜지난 2년 간의 회사 실적＞\n1. 세계최초 Medical LLM Global Competition1위 수상\n2. Nature, 2024년도 Medical LLM Model 세계 1위 선정\n3. NVIDIA Nemotron Model ReasoningChallenge 5위 수상 \n4. 세계 1위 AI연구소 MILA 공동연구 진행 \n5. NVIDIA Graph Augmented LLM 공동연구 진행  \n6. Google 공동연구 진행 \n7. CVPR, ICML 등 최상위권 AI 학회 포함 SCI급 50편 게재   \n8. 복지부 주관, R&D Bio-Health Park를 통한 신속 실증 플랫폼 구축 진행\n9. 과기부 주관, 암정복프로젝트 진행  \n10. 국립암센터 주관, 공공데이터 기반 지식 그래프를 활용한 해석 가능한 암환자 예후 예측 모델 연구 \n11. 글로벌 자동차 회사 AX 진행\n12. 글로벌 제약회사 AX 진행 \n13 중기부 주관, 창업성장기술개발사업(R&D) 선정\n14. 국내 최초 법인설립 1년 이내 딥테크팁스 패스트트랙 선정",
+        "main_tasks": "1. 실시간 번역 서비스 설계 및 구축\n안정적이고 확장성 높은 실시간 번역 서비스 아키텍처를 설계하고 구축합니다. 브라우저와 서버, 서버와 AI 엔진 사이에 양방향 통신을 설계하고, 세션 생명주기·재연결·HA 복구를 구현하여 끊김 없는 자막과 번역 품질을 보장합니다.\n\n2. 콘텐츠 AI 자동 생성 서비스 개발 및 고도화\n카드뉴스, 퀴즈, 웨비나 진행 디자인 파일 등 마케팅 콘텐츠로 자동 변환하는 서비스적 서버를 설계하고 구축합니다. 외부 문헌 수집 파이프라인과 LLM 기반 생성 파이프라인을 연결하고, 콘텐츠 생성 작업의 요청-진행-결과 저장에 이르는 생명주기를 관리합니다.",
+        "requirements": "1. Java / Spring Boot 기반 서버 애플리케이션 개발 경력 5년 이상\n\n2. WebSocket 등 실시간 양방향 통신 설계 및 구현 경험\n\n3. 세션 생명주기, 재연결, 장애 복구(HA)를 고려한 서버 아키텍처 설계 경험\n\n4. REST API 설계 및 클라이언트, 외부(AI) 서버와의 원활한 데이터 연동 경험\n\n5. PostgreSQL 등 RDB 설계·튜닝 및 Redis 활용 경험\n\n6. JWT 기반 인증/인가 및 역할별 접근 제어 구현 경험\n\n7. AWS 환경에서의 서비스 배포 및 운영 경험\n\n8. 서비스 아키텍처를 주도적으로 설계하고 기술 의사결정을 내려본 경험",
+        "preferred_points": "1. 스타트업 초기 합류 또는 01 서비스 구축 경험\n\n2. 소규모 팀 리딩 또는 주니어 멘토링 경험\n\n3. LLM 기반 파이프라인 설계 및 연동 경험\n\n4. 실시간 오디오 스트리밍, STT/TTS 연동 경험\n\n5. 대규모 동시 접속 처리 및 트래픽 최적화 경험\n\n6. AWS CDK 등 IaC로 인프라를 코드로 관리한 경험\n\n7. CI/CD 파이프라인 구축 및 운영 경험\n\n8. 메시지 큐(Kafka, SQS 등) 기반 비동기 처리 경험\n\n9. OAuth2, SSO 등 인증/인가 구조에 대한 이해\n\n10. AI 개발 도구를 활용해 생산성과 코드 품질을 높이는 데 관심이 있는 분",
+        "benefits": "4대보험\n경조휴가\n공휴일 휴무\n노동절 휴무\n반반차 제도\n반차제도\n사내 이벤트\n생일 이벤트\n연차제도\n워크샵/MT\n위로휴가\n육아휴직\n정기휴가\n주5일제\n주말 휴무\n각종 기념일 선물\n경조금\n교통비\n도서 구입비 지원\n명절선물/명절상여\n상여금\n성과급\n야간교통비 지급\n인센티브\n장기근속 포상\n청년내일채움공제\n퇴직금\n교육/세미나/스터디\n멘토링 제도\n수평적 문화\n신입 사원 교육\n자율복장\n주52시간\n팀빌딩 제도\n공유오피스\n사내도서관\n사내정원\n사내카페\n안마실/안마의자\n장애인 배려시설\n장애인용 승강기\n장애인용 주차장\n장애인용 화장실\n주차장\n카페테리아\n탕비실\n휴식공간\n건강검진\n사내 편의 서비스\n식사 지원\n음료/간식 제공\n저녁 식사 지원\n점심 식사 지원",
+        "hire_rounds": "서류 전형 ---＞ 기술인터뷰 ---＞ 컬쳐핏인터뷰 ---＞ 처우협의 ---＞ 최종합격"
+      },
+      "attraction_tags": [
+        {
+          "tag_type_id": 10447,
+          "title": "유망산업",
+          "kind_title": "ATTRACTION",
+          "tag_category_id": 9
+        },
+        {
+          "tag_type_id": 10426,
+          "title": "보너스",
+          "kind_title": "ATTRACTION",
+          "tag_category_id": 7
+        },
+        {
+          "tag_type_id": 10436,
+          "title": "커피·스낵바",
+          "kind_title": "ATTRACTION",
+          "tag_category_id": 7
+        },
+        {
+          "tag_type_id": 10416,
+          "title": "자유로운휴가",
+          "kind_title": "ATTRACTION",
+          "tag_category_id": 6
+        },
+        {
+          "tag_type_id": 10440,
+          "title": "편의시설",
+          "kind_title": "ATTRACTION",
+          "tag_category_id": 7
+        },
+        {
+          "tag_type_id": 10418,
+          "title": "육아휴직",
+          "kind_title": "ATTRACTION",
+          "tag_category_id": 6
+        },
+        {
+          "tag_type_id": 10444,
+          "title": "자율복장",
+          "kind_title": "ATTRACTION",
+          "tag_category_id": 8
+        },
+        {
+          "tag_type_id": 10462,
+          "title": "워크샵",
+          "kind_title": "ATTRACTION",
+          "tag_category_id": 7
+        },
+        {
+          "tag_type_id": 10423,
+          "title": "건강검진지원",
+          "kind_title": "ATTRACTION",
+          "tag_category_id": 7
+        }
+      ],
+      "company": {
+        "id": 58593,
+        "name": "뉴메스(NewMesInc.)",
+        "industry_name": null,
+        "company_tags": [],
+        "logo_img": {
+          "origin": "https://static.wanted.co.kr/images/wdes/0_5.9f6f92cd.png",
+          "thumb": "https://static.wanted.co.kr/images/wdes/0_4.9f6f92cd.png"
+        },
+        "application_response_stats": {
+          "id": 77908,
+          "avg_day": null,
+          "avg_rate": 8.89,
+          "level": "very_low",
+          "reply_type": "applied_reply_done",
+          "target_count": 45,
+          "remain_count_to_next": null,
+          "company_id": 58593
+        },
+        "position_count": 1,
+        "highlight_tags": [],
+        "is_attractive_company": false
+      },
+      "address": {
+        "id": 75827,
+        "company_id": 58593,
+        "country": "한국",
+        "country_code": "kr",
+        "location": "서울",
+        "district": "강남구",
+        "i18n_country": "label.country.kr",
+        "i18n_location": "label.location.kr.seoul",
+        "i18n_district": "label.location.kr.seoul.gangnam-gu",
+        "full_location": "서울 강남구 테헤란로 142, 5층 뉴메스",
+        "geo_location": {
+          "bounds": null,
+          "location": {
+            "lat": 37.4997187,
+            "lng": 127.0348982
+          },
+          "location_type": "ROOFTOP",
+          "viewport": {
+            "northeast": {
+              "lat": 37.5010676802915,
+              "lng": 127.0362471802915
+            },
+            "southwest": {
+              "lat": 37.4983697197085,
+              "lng": 127.0335492197085
+            }
+          },
+          "n_location": {
+            "lat": 37.4997343,
+            "lng": 127.0349637,
+            "road_address": "서울특별시 강남구 테헤란로 142 캐피탈타워"
+          }
+        }
+      },
+      "reward": {
+        "id": 441813,
+        "wd_id": 379010,
+        "country": "KR",
+        "user_country": "KR",
+        "reward_recommender": 500000,
+        "reward_recommendee": 500000,
+        "reward_recommender_unit": "KRW",
+        "reward_recommendee_unit": "KRW",
+        "formatted_total": "100만원",
+        "formatted_recommender": "50만원",
+        "formatted_recommendee": "50만원"
+      },
+      "wpoint_reward": {
+        "wpoint_reward_recommender": 0,
+        "wpoint_reward_recommendee": 0
+      },
+      "category_tag": {
+        "parent_tag": {
+          "id": 518,
+          "text": "개발"
+        },
+        "child_tags": [
+          {
+            "id": 660,
+            "text": "자바 개발자"
+          },
+          {
+            "id": 872,
+            "text": "서버 개발자"
+          }
+        ]
+      },
+      "skill_tags": [],
+      "title_images": [
+        "https://static.wanted.co.kr/images/company/58593/3cjqbilrwq9x1o4c__1080_790.jpg",
+        "https://static.wanted.co.kr/images/company/58593/mif8ppoqz8e2l51b__1080_790.jpg",
+        "https://static.wanted.co.kr/images/company/58593/mbvymeqkrqbdpdmj__1080_790.jpg"
+      ],
+      "is_bookmark": false,
+      "is_company_follow": false,
+      "hidden": false,
+      "is_private": false,
+      "annual_to": 100,
+      "annual_from": 5,
+      "is_newbie": false,
+      "name": null,
+      "wanted_pick": null,
+      "out_link": null,
+      "is_extension_enabled": false,
+      "employment_type": "regular",
+      "additional_apply_type": null,
+      "employment_note": null,
+      "preferred_languages": null,
+      "visa_information": null
+    }
+  }
+}

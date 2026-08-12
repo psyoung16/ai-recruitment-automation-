@@ -13,10 +13,12 @@ FALLBACK_API_KEY_ENV = "GPT_API_KEY"  # .env에서 읽을 키 이름
 USE_FALLBACK = True  # Fallback 기능 활성화 여부
 
 MY_PROFILE = """
-- 언어: Python, Java
-- 프레임워크: Django, Spring Boot
-- 경력: 3년차 백엔드
-- 관심 도메인: 인증/인가, MSA
+- 언어: Java
+- 프레임워크: Spring Boot, Spring MVC
+- 데이터베이스: MySQL, PostgreSQL
+- 경력: 3년차 백엔드 개발자
+- 기타: Git, Docker 사용 가능
+- 관심 도메인: 백엔드 API 개발, MSA
 """
 
 # 매칭 점수 임계값

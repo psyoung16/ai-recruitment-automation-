@@ -39,16 +39,51 @@ data/{query}/ 읽기
 output/{query}/job_*_analyzed.json 저장
 
 
-3단계: Evaluation (다음 구현) ⭐
+3단계: Evaluation ⭐
 ─────────────────────────────────────
-테스트셋 로드 (추천/비추천 공고)
+Ground Truth 로드 (apply/borderline/no_apply)
     ↓
-각 공고 분석
+분석 결과 로드 (output/{query}/)
     ↓
-예측 vs 실제 비교
+예측 vs 실제 비교 (borderline 제외)
     ↓
-정확도 계산 & 리포트 생성
+메트릭 계산 (Accuracy, Precision, Recall, F1, MAE)
+    ↓
+리포트 생성 (JSON + Markdown)
 ```
+
+## 📊 Evaluation 시스템
+
+**목표:** "돌아간다" → "쓸만하다" 검증
+
+### 평가 가능한 방법들
+
+| 평가 항목 | 설명 | 측정 방법 | 중요도 |
+|---------|------|---------|--------|
+| **1. End-to-End 정확도** | 최종 추천 여부가 맞는가? | Ground Truth와 비교 | ⭐⭐⭐ 가장 중요 |
+| **2. 점수 정확도** | 0-100점이 실제와 일치하는가? | MAE, RMSE | ⭐⭐⭐ |
+| **3. 스킬 추출 품질** | 공고에서 스킬을 제대로 뽑았는가? | Precision/Recall | ⭐⭐ |
+| **4. 경력 해석 정확도** | "3년 이상"을 제대로 이해하는가? | Exact Match | ⭐⭐ |
+| **5. 임계값 타당성** | 70점이 적절한 기준인가? | ROC Curve, F1 최적화 | ⭐⭐ |
+| **6. 모델 일관성** | 같은 공고를 여러 번 돌려도 같은가? | Standard Deviation | ⭐ |
+| **7. 모델 간 일치도** | Gemini vs GPT 점수가 비슷한가? | Cohen's Kappa | ⭐ |
+
+### 선택한 방법
+
+- **End-to-End 정확도** (Accuracy, Precision, Recall, F1) - 사용자 관점에서 가장 중요
+- **점수 정확도** (MAE) - 추천 순서 검증용
+- **실패 케이스 분석** - 프롬프트 개선 방향 도출
+
+### 실행 결과
+
+- **Accuracy**: 60% (3/5) - borderline 5개 제외
+- **False Negative**: 2건 (좋은 공고를 놓침)
+  - 코드잇: Kotlin 미경험 과대 페널티 (-40점)
+  - 와탭랩스: 인프라 역량 과소평가 (-35점)
+- **개선 방향**: 유사 기술 스택 가중치 조정, 신입 포지션 학습 의지 고려
+
+**자세한 내용:** `evaluation/README.md` 참고
+
 
 ## 🏗️ 주요 기능
 
@@ -71,19 +106,10 @@ python batch_matcher.py --query "백엔드"
 # - 매칭 점수, 추천 여부, 분석 상세 정보
 ```
 
-### 3. Evaluation 시스템 (TODO)
-```python
-# 테스트셋으로 정확도 측정
-python evaluate.py --test-set evaluation/test_jobs.json
-
-# 출력 예시:
-# ✅ 정확도: 85%
-# ✅ 추천 공고 정확도: 90% (9/10)
-# ❌ 비추천 공고 정확도: 80% (8/10)
-#
-# 실패 케이스:
-# - Job 365200: 예측 75점 (추천) / 실제: 비추천
-#   이유: 경력 요구사항 과대평가
+### 3. Evaluation 시스템 ✅
+```bash
+# 실행 방법 및 상세 결과는 evaluation/README.md 참고
+python evaluation/evaluate.py
 ```
 
 ### 3. 에러 핸들링 ✅
@@ -120,38 +146,15 @@ python scheduler.py --cron "0 9 * * *"
 ├── api/                       # 원티드 API
 ├── llm/                       # LLM 어댑터 (gemini, openai)
 ├── config/                    # 설정 & 로깅
-├── evaluation/                # 평가 시스템 (TODO)
+├── evaluation/                # 평가 시스템 ✅
+│   ├── evaluate.py           # 평가 스크립트
+│   ├── test_jobs.json        # Ground Truth
+│   └── reports/              # 평가 결과 (JSON + Markdown)
 ├── data/                      # 수집된 공고 (*.json)
 ├── output/                    # 분석 결과 (*_analyzed.json)
 └── logs/                      # 실행 로그
 ```
 
-## 🎓 핵심 학습 포인트
-
-### 1. Evaluation 설계
-```python
-# test_jobs.json 구조
-{
-  "recommended": [  # 추천 공고
-    {"job_id": 365200, "expected_score_range": [70, 100]},
-    {"job_id": 365201, "expected_score_range": [75, 100]}
-  ],
-  "not_recommended": [  # 비추천 공고
-    {"job_id": 365300, "expected_score_range": [0, 69]},
-    {"job_id": 365301, "expected_score_range": [0, 69]}
-  ]
-}
-```
-
-### 2. 회귀 테스트
-```python
-# 프롬프트 변경 전후 비교
-python evaluate.py --compare baseline_v1 current_v2
-
-# 출력:
-# Baseline v1: 85% 정확도
-# Current v2:  88% 정확도 (+3%p 개선)
-```
 
 ## 🚀 설치 및 실행
 
@@ -192,42 +195,10 @@ ls output/백엔드/
 # → job_365200_analyzed.json, ...
 ```
 
-### 5. Evaluation 실행 (TODO)
+### 5. Evaluation 실행
 ```bash
-python evaluation/evaluate.py --query "백엔드"
-```
-
-## 📊 Evaluation 결과 예시
-
-```
-=== Evaluation Report ===
-날짜: 2026-08-09
-테스트셋: 20개 (추천 10개, 비추천 10개)
-
-전체 정확도: 85% (17/20)
-
-추천 공고:
-  ✅ 정확도: 90% (9/10)
-  ❌ False Negative: 1개 (추천인데 비추천으로 예측)
-
-비추천 공고:
-  ✅ 정확도: 80% (8/10)
-  ❌ False Positive: 2개 (비추천인데 추천으로 예측)
-
-실패 케이스 분석:
-1. Job 365200 (False Negative)
-   - 예측: 68점 (비추천)
-   - 실제: 추천
-   - 원인: "3년차 경력" 요구사항을 너무 엄격하게 해석
-
-2. Job 365300 (False Positive)
-   - 예측: 72점 (추천)
-   - 실제: 비추천
-   - 원인: "Kotlin" 필수 요구사항을 선택사항으로 오해
-
-개선 방향:
-- 경력 요구사항 해석 로직 개선
-- 필수 vs 우대 요구사항 구분 강화
+# 실행 방법 및 결과 해석은 evaluation/README.md 참고
+python evaluation/evaluate.py
 ```
 
 ## 🔄 다음 단계 (03-monitoring)
@@ -236,13 +207,4 @@ python evaluation/evaluate.py --query "백엔드"
 - 멀티 플랫폼 크롤링
 - DB 기반 데이터 관리
 
----
-
-## 💡 이 프로젝트로 얻을 수 있는 경험
-
-✅ **Evaluation 설계**: AI 시스템의 품질을 정량적으로 측정
-✅ **회귀 테스트**: 프롬프트 변경 시 성능 추적
-✅ **에러 핸들링**: 재시도 로직, Rate limiting
-✅ **배치 처리**: 대량 데이터 안정적 처리
-✅ **"돌아간다"와 "쓸만하다"의 차이를 측정하고 개선**
 

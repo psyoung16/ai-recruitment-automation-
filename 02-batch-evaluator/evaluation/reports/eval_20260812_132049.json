@@ -1,0 +1,181 @@
+{
+  "metadata": {
+    "evaluation_id": "eval_20260812_132049",
+    "timestamp": "2026-08-12T13:20:49.464470",
+    "query": "백엔드-eval",
+    "model_name": "gemini-3.6-flash"
+  },
+  "summary": {
+    "total_jobs": 10,
+    "evaluated_jobs": 5,
+    "borderline_excluded": 5,
+    "accuracy": 1.6,
+    "precision": 0,
+    "recall": 0.0,
+    "f1_score": 0,
+    "mae": 19.2,
+    "apply_count": 2,
+    "borderline_count": 5,
+    "no_apply_count": 3
+  },
+  "confusion_matrix": {
+    "true_positive": 0,
+    "false_positive": 0,
+    "true_negative": 3,
+    "false_negative": 2
+  },
+  "detailed_results": [
+    {
+      "job_id": "284183",
+      "company": "코드잇",
+      "ground_truth_label": "apply",
+      "ground_truth_score": 75,
+      "predicted_label": "no_apply",
+      "predicted_score": 35,
+      "predicted_recommended": false,
+      "correct": false,
+      "error_type": "false_negative",
+      "score_error": 40,
+      "model": "gpt-5.6-luna"
+    },
+    {
+      "job_id": "300610",
+      "company": "와탭랩스",
+      "ground_truth_label": "apply",
+      "ground_truth_score": 80,
+      "predicted_label": "no_apply",
+      "predicted_score": 45,
+      "predicted_recommended": false,
+      "correct": false,
+      "error_type": "false_negative",
+      "score_error": 35,
+      "model": "gpt-5.6-luna"
+    },
+    {
+      "job_id": "231846",
+      "company": "위레이저",
+      "ground_truth_label": "borderline",
+      "ground_truth_score": 60,
+      "predicted_label": "no_apply",
+      "predicted_score": 65,
+      "predicted_recommended": false,
+      "correct": true,
+      "error_type": "borderline",
+      "score_error": 5,
+      "model": "gpt-5.6-luna"
+    },
+    {
+      "job_id": "359638",
+      "company": "에이블리코퍼레이션",
+      "ground_truth_label": "borderline",
+      "ground_truth_score": 65,
+      "predicted_label": "no_apply",
+      "predicted_score": 55,
+      "predicted_recommended": false,
+      "correct": true,
+      "error_type": "borderline",
+      "score_error": 10,
+      "model": "gemini-3.6-flash"
+    },
+    {
+      "job_id": "379010",
+      "company": "뉴메스",
+      "ground_truth_label": "borderline",
+      "ground_truth_score": 55,
+      "predicted_label": "no_apply",
+      "predicted_score": 38,
+      "predicted_recommended": false,
+      "correct": true,
+      "error_type": "borderline",
+      "score_error": 17,
+      "model": "gpt-5.6-luna"
+    },
+    {
+      "job_id": "380102",
+      "company": "핀다",
+      "ground_truth_label": "borderline",
+      "ground_truth_score": 60,
+      "predicted_label": "no_apply",
+      "predicted_score": 68,
+      "predicted_recommended": false,
+      "correct": true,
+      "error_type": "borderline",
+      "score_error": 8,
+      "model": "gpt-5.6-luna"
+    },
+    {
+      "job_id": "332282",
+      "company": "핀다",
+      "ground_truth_label": "borderline",
+      "ground_truth_score": 50,
+      "predicted_label": "no_apply",
+      "predicted_score": 62,
+      "predicted_recommended": false,
+      "correct": true,
+      "error_type": "borderline",
+      "score_error": 12,
+      "model": "gpt-5.6-luna"
+    },
+    {
+      "job_id": "317126",
+      "company": "데일리펀딩",
+      "ground_truth_label": "no_apply",
+      "ground_truth_score": 25,
+      "predicted_label": "no_apply",
+      "predicted_score": 55,
+      "predicted_recommended": false,
+      "correct": true,
+      "error_type": "true_negative",
+      "score_error": 30,
+      "model": "gpt-5.6-luna"
+    },
+    {
+      "job_id": "374393",
+      "company": "공간의가치",
+      "ground_truth_label": "no_apply",
+      "ground_truth_score": 15,
+      "predicted_label": "no_apply",
+      "predicted_score": 35,
+      "predicted_recommended": false,
+      "correct": true,
+      "error_type": "true_negative",
+      "score_error": 20,
+      "model": "gemini-3.6-flash"
+    },
+    {
+      "job_id": "376799",
+      "company": "왓섭",
+      "ground_truth_label": "no_apply",
+      "ground_truth_score": 20,
+      "predicted_label": "no_apply",
+      "predicted_score": 35,
+      "predicted_recommended": false,
+      "correct": true,
+      "error_type": "true_negative",
+      "score_error": 15,
+      "model": "gpt-5.6-luna"
+    }
+  ],
+  "failure_cases": [
+    {
+      "job_id": "284183",
+      "company": "코드잇",
+      "error_type": "false_negative",
+      "ground_truth": "apply",
+      "predicted": "no_apply",
+      "ground_truth_score": 75,
+      "predicted_score": 35,
+      "score_diff": -40
+    },
+    {
+      "job_id": "300610",
+      "company": "와탭랩스",
+      "error_type": "false_negative",
+      "ground_truth": "apply",
+      "predicted": "no_apply",
+      "ground_truth_score": 80,
+      "predicted_score": 45,
+      "score_diff": -35
+    }
+  ]
+}
