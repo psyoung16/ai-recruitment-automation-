@@ -21,6 +21,25 @@
 
 ---
 
+### [02-batch-evaluator](./02-batch-evaluator) ✅
+**배치 자동화 + Evaluation 시스템**
+
+여러 공고를 자동으로 처리하고 시스템의 정확도를 측정합니다.
+
+**핵심 학습:**
+- LLM 어댑터 패턴 & Fallback 시스템
+- Exponential Backoff 재시도 로직
+- Ground Truth 기반 정량 평가
+- 실패 케이스 분석
+
+**주요 기능:**
+- 2단계 파이프라인 (수집 → 분석 분리)
+- Rate Limit 대응 자동 모델 전환
+- Evaluation 시스템 (Accuracy, Precision, Recall, F1, MAE)
+- JSON + Markdown 리포트 생성
+
+---
+
 ## 단계별 구현 계획
 
 
@@ -43,9 +62,19 @@
 ```
 ai-job-matcher/
 ├── README.md                      # 👈 현재 파일
-├── 01-basic-matcher/              # 기본 매칭 시스템
+├── 01-basic-matcher/              # 기본 매칭 시스템 ✅
 │   ├── README.md
 │   ├── main.py
+│   └── ...
+├── 02-batch-evaluator/            # 배치 처리 & 평가 ✅
+│   ├── README.md
+│   ├── collector.py               # 공고 수집
+│   ├── batch_matcher.py           # 배치 분석
+│   ├── evaluation/                # 평가 시스템
+│   │   ├── evaluate.py
+│   │   ├── test_jobs.json
+│   │   └── reports/
+│   ├── llm/                       # LLM 어댑터
 │   └── ...
 ```
 
@@ -63,18 +92,19 @@ ai-job-matcher/
 - [ ] 매칭 점수가 애매하면(50~70점) 재검토 판단
 - [ ] 컨텍스트 기반 의사결정 및 동적 도구 호출
 
-### 2. **평가(Evaluation)**
+### 2. **평가(Evaluation)** ✅
 **"돌아간다" ≠ "쓸만하다"**
 
-- [ ] 정량적 평가: 지원할 공고 vs 안 할 공고 각 10개 테스트
-- [ ] 매칭 점수 정확도 측정 및 문서화
-- [ ] 프롬프트 변경 시 회귀 테스트
+- [x] 정량적 평가: Ground Truth 기반 테스트셋 구축
+- [x] 매칭 점수 정확도 측정 및 문서화 (Accuracy, Precision, Recall, F1, MAE)
+- [x] 실패 케이스 분석으로 개선 방향 도출
+- [ ] 프롬프트 변경 시 회귀 테스트 자동화
 - [ ] 실험 설계 및 A/B 테스트
 
-### 3. **LLM 응답 품질 검증**
+### 3. **LLM 응답 품질 검증** ✅
 - [ ] 스키마는 맞지만 내용이 이상한 경우 처리 (예: "Python" → "파이썬 짱짱")
-- [ ] 재시도 로직 (exponential backoff)
-- [ ] Rate limiting 및 장애 복구
+- [x] 재시도 로직 (exponential backoff)
+- [x] Rate limiting 및 장애 복구 (Fallback 모델 전환)
 
 ### 4. **관측(Observability)**
 - [ ] **Grafana + Prometheus**: API 메트릭, 토큰 사용량, trace
@@ -91,20 +121,21 @@ ai-job-matcher/
 
 ## 📋 단계별 구현 계획
 
-### **02-batch-evaluator** (다음 단계)
+### **02-batch-evaluator** ✅
 ```
 배치 자동화 + Evaluation 시스템
-├── 재시도 로직 & 에러 핸들링
-├── 중복 분석 방지
-├── 자동 스케줄링 (cron/scheduler)
-├── Evaluation 시스템 구축 ⭐
-│   ├── 지원할/안할 공고 테스트셋 구축
-│   ├── 매칭 점수 정확도 측정
-│   └── 회귀 테스트 자동화
-└── Slack 알림 연동
+├── ✅ 재시도 로직 & 에러 핸들링 (Exponential Backoff)
+├── ✅ LLM 어댑터 패턴 & Fallback 시스템
+├── ✅ 중복 분석 방지
+├── ✅ Evaluation 시스템 구축
+│   ├── ✅ Ground Truth 테스트셋 구축 (10개 공고)
+│   ├── ✅ 매칭 점수 정확도 측정 (Accuracy, Precision, Recall, F1, MAE)
+│   └── ✅ 실패 케이스 분석 및 개선 방향 도출
+├── 자동 스케줄링 (cron/scheduler) - 보류
+└── Slack 알림 연동 - 보류
 ```
 
-### **03-monitoring** (관측 단계)
+### **03-monitoring** (다음 단계)
 ```
 모니터링 + 멀티 플랫폼
 ├── Grafana + Prometheus
