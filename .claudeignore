@@ -3,20 +3,37 @@
 # 예시 응답 데이터
 wanted_api_example.json
 
+# 환경 변수 & API Keys (절대 읽지 말 것!)
+.env
+*.env
+.env.local
+.env.*.local
+
 # 출력 파일들
 output/
-
-# 기타 제외할 패턴들 (필요시)
+data/
+logs/
 *.log
+
+# Python
 *.jsonl
 *.tmp
-node_modules/
 __pycache__/
-.env
+*.pyc
 .venv/
 venv/
-*.pyc
+*.pyo
+
+# IDE
 .DS_Store
-*.env
 *.idea
-output/
+.vscode/
+
+# 의존성
+node_modules/
+
+# Docker 볼륨 데이터
+postgres-data/
+redis-data/
+prometheus-data/
+grafana-data/

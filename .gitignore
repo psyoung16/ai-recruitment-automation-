@@ -3,21 +3,44 @@
 # 예시 응답 데이터
 wanted_api_example.json
 
-# 기타 제외할 패턴들 (필요시)
+# 환경 변수 & API Keys
+.env
+*.env
+.env.local
+.env.*.local
+
+# Python
 *.log
 *.jsonl
 *.tmp
-node_modules/
 __pycache__/
-.env
+*.pyc
 .venv/
 venv/
-*.pyc
-.DS_Store
-*.env
-*.idea
+*.pyo
+*.pyd
+.Python
+pip-log.txt
+
+# 출력 & 데이터
 output/
+data/
+logs/
+*.log
+
+# IDE
+.DS_Store
+*.idea
+.vscode/
+*.swp
+*.swo
+
+# 의존성
+node_modules/
 
 # Claude Code
 .claude/
 .claude_code/
+
+# Docker
+*.env.docker
