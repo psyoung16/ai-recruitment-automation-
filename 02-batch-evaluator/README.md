@@ -204,7 +204,7 @@ python evaluation/evaluate.py
 ## 🔄 다음 단계 (03-monitoring)
 
 - Grafana + Prometheus 모니터링
-- 멀티 플랫폼 크롤링
-- DB 기반 데이터 관리
+- PostgreSQL 기반 메트릭 저장
+- Docker Compose 인프라 구축
 
 
