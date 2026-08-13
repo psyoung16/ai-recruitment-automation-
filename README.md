@@ -59,6 +59,25 @@
 
 ---
 
+### [04-integration](./04-integration) 🔄
+**통합 검증 & 운영 준비**
+
+구현한 시스템을 실제 환경에서 통합하고 검증합니다.
+
+**핵심 학습:**
+- End-to-End 통합 테스트
+- 실데이터 검증 및 성능 측정
+- 운영 편의 기능 구현 (Slack 알림)
+- 트러블슈팅 및 문제 해결
+
+**주요 기능:**
+- Docker Compose 전체 스택 검증
+- 100+ 공고로 대용량 테스트
+- Slack 알림 연동
+- 포트폴리오 자료 수집 (스크린샷, 데모)
+
+---
+
 ## 단계별 구현 계획
 
 
@@ -106,6 +125,11 @@ ai-job-matcher/
 │   └── config/
 │       ├── prometheus.yml         # Prometheus 설정
 │       └── grafana/               # Grafana 대시보드
+├── 04-integration/                # 통합 검증 & 운영 🔄
+│   ├── README.md
+│   ├── test_results/              # 테스트 결과 (예정)
+│   ├── slack_notifier.py          # Slack 알림 (예정)
+│   └── docs/                      # 운영 문서 (예정)
 ```
 
 ## 🚀 시작하기
