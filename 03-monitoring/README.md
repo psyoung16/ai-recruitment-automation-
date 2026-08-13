@@ -93,57 +93,113 @@
 
 ## 🚀 설치 및 실행
 
-### 1. Prometheus 설치 (Docker)
+### 방법 1: Docker Compose로 전체 스택 실행 (추천)
 
 ```bash
-# prometheus.yml 설정 파일 생성
-cat > prometheus.yml <<EOF
-global:
-  scrape_interval: 15s
+# 1. 의존성 설치
+pip install -r requirements.txt
 
-scrape_configs:
-  - job_name: 'job-matcher'
-    static_configs:
-      - targets: ['host.docker.internal:8000']
-EOF
+# 2. 환경 변수 설정 (.env 파일)
+cp ../02-batch-evaluator/.env .env
+# GEMINI_API_KEY, OPENAI_API_KEY 설정
 
-# Prometheus 실행
-docker run -d \
-  --name prometheus \
-  -p 9090:9090 \
-  -v $(pwd)/prometheus.yml:/etc/prometheus/prometheus.yml \
-  prom/prometheus
-```
+# 3. Docker Compose로 인프라 실행
+docker-compose up -d
 
-### 2. Grafana 설치 (Docker)
+# 4. 컨테이너 상태 확인
+docker ps
+# redis, postgres, prometheus, grafana 확인
 
-```bash
-# Grafana 실행
-docker run -d \
-  --name grafana \
-  -p 3000:3000 \
-  grafana/grafana
+# 5. 메트릭 서버 실행 (호스트에서)
+python metrics_server.py &
 
-# 접속: http://localhost:3000
+# 6. 메트릭 확인
+curl http://localhost:8000/metrics
+
+# 7. Prometheus 확인
+open http://localhost:9090
+
+# 8. Grafana 확인
+open http://localhost:3000
 # 기본 계정: admin / admin
 ```
 
-### 3. 메트릭 서버 실행
+### 방법 2: 단계별 수동 실행
+
+#### Step 1: 의존성 설치
 
 ```bash
-# 백그라운드로 메트릭 서버 실행
+pip install -r requirements.txt
+```
+
+#### Step 2: Redis 실행 (Docker)
+
+```bash
+docker run -d --name redis -p 6379:6379 redis:7-alpine
+```
+
+#### Step 3: PostgreSQL 실행 (Docker)
+
+```bash
+docker run -d \
+  --name postgres \
+  -e POSTGRES_DB=job_matcher \
+  -e POSTGRES_USER=matcher \
+  -e POSTGRES_PASSWORD=matcher123 \
+  -p 5432:5432 \
+  -v $(pwd)/init.sql:/docker-entrypoint-initdb.d/init.sql \
+  postgres:15-alpine
+```
+
+#### Step 4: Prometheus 실행 (Docker)
+
+```bash
+docker run -d \
+  --name prometheus \
+  -p 9090:9090 \
+  -v $(pwd)/config/prometheus.yml:/etc/prometheus/prometheus.yml \
+  prom/prometheus
+```
+
+#### Step 5: Grafana 실행 (Docker)
+
+```bash
+docker run -d \
+  --name grafana \
+  -p 3000:3000 \
+  -e GF_SECURITY_ADMIN_PASSWORD=admin \
+  -v $(pwd)/config/grafana/provisioning:/etc/grafana/provisioning \
+  -v $(pwd)/config/grafana/dashboards:/var/lib/grafana/dashboards \
+  grafana/grafana
+```
+
+#### Step 6: 메트릭 서버 실행
+
+```bash
+# 백그라운드로 실행
 python metrics_server.py &
 
-# 메트릭 확인
-curl http://localhost:8000/metrics
+# 또는 터미널 별도로 실행
+python metrics_server.py
 ```
 
-### 4. 배치 분석 실행
+#### Step 7: 배치 분석 실행
 
 ```bash
-# 기존과 동일하게 실행 (메트릭 자동 수집)
-python batch_matcher.py --query "백엔드" --limit 20
+# 공고 수집 (기존과 동일)
+python collector.py --query "백엔드" --limit 10
+
+# 배치 분석 (메트릭이 자동으로 수집됨)
+python batch_matcher.py --query "백엔드"
 ```
+
+### 접속 URL
+
+- **메트릭 서버**: http://localhost:8000
+- **Prometheus**: http://localhost:9090
+- **Grafana**: http://localhost:3000 (admin/admin)
+- **Redis**: localhost:6379
+- **PostgreSQL**: localhost:5432 (matcher/matcher123)
 
 ---
 
