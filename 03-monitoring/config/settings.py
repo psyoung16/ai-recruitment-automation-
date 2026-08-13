@@ -6,8 +6,8 @@
 GEMINI_MODEL = "gemini-3.6-flash"
 
 # Fallback LLM 모델 설정 (Primary 모델 실패 시 사용)
-FALLBACK_MODEL_NAME = "gpt-5.6-luna"
-# FALLBACK_MODEL_NAME = "gpt-5-nano"
+# FALLBACK_MODEL_NAME = "gpt-5.6-luna"
+FALLBACK_MODEL_NAME = "gpt-5-nano"
 #gpt-5-nano
 FALLBACK_API_KEY_ENV = "GPT_API_KEY"  # .env에서 읽을 키 이름
 USE_FALLBACK = True  # Fallback 기능 활성화 여부
