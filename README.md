@@ -40,6 +40,25 @@
 
 ---
 
+### [03-monitoring](./03-monitoring) ✅
+**실시간 모니터링 + 메트릭 시각화**
+
+배치 시스템의 운영 상태와 매칭 성능을 실시간으로 추적합니다.
+
+**핵심 학습:**
+- Prometheus + Grafana 메트릭 수집 및 시각화
+- PostgreSQL 기반 시계열 데이터 저장
+- Docker Compose 인프라 구축
+- 프로세스 간 메트릭 공유 아키텍처
+
+**주요 기능:**
+- 분석 공고 수, 추천 비율 실시간 추적
+- 쿼리별 평균 매칭 점수 모니터링
+- Grafana 대시보드를 통한 시각화
+- DB 기반 메트릭 영속성 보장
+
+---
+
 ## 단계별 구현 계획
 
 
@@ -76,6 +95,17 @@ ai-job-matcher/
 │   │   └── reports/
 │   ├── llm/                       # LLM 어댑터
 │   └── ...
+├── 03-monitoring/                 # 모니터링 & 인프라 ✅
+│   ├── README.md
+│   ├── batch_matcher.py           # DB 저장 기능 추가
+│   ├── metrics_server.py          # 메트릭 노출 서버
+│   ├── docker-compose.yml         # 인프라 구성
+│   ├── monitoring/
+│   │   ├── db.py                  # DB 연결 및 저장
+│   │   └── metrics.py             # 메트릭 정의
+│   └── config/
+│       ├── prometheus.yml         # Prometheus 설정
+│       └── grafana/               # Grafana 대시보드
 ```
 
 ## 🚀 시작하기
@@ -106,8 +136,9 @@ ai-job-matcher/
 - [x] 재시도 로직 (exponential backoff)
 - [x] Rate limiting 및 장애 복구 (Fallback 모델 전환)
 
-### 4. **관측(Observability)**
-- [ ] **Grafana + Prometheus**: API 메트릭, 토큰 사용량, trace
+### 4. **관측(Observability)** ✅ (부분)
+- [x] **Grafana + Prometheus**: 비즈니스 메트릭 (분석 건수, 추천 비율, 매칭 점수)
+- [ ] **Grafana + Prometheus**: API 메트릭, 토큰 사용량, trace (향후 확장)
 - [ ] **Superset**: 매칭 분포, 스킬 트렌드, 실험 결과
 - [ ] **ELK**: Agent 추론 과정 로그 분석
 
@@ -135,22 +166,41 @@ ai-job-matcher/
 └── Slack 알림 연동 - 보류
 ```
 
-### **03-monitoring** (다음 단계)
+### **03-monitoring** ✅
 ```
 실시간 모니터링 + 인프라 구축
-├── Docker Compose (전체 시스템 컨테이너화)
-├── Redis (공고 데이터 캐싱)
-├── PostgreSQL (분석 결과 저장)
-├── Grafana + Prometheus
-│   ├── API 호출 메트릭 (성공/실패율, 응답시간)
-│   ├── LLM 메트릭 (토큰 사용량, 비용, Fallback 비율)
-│   ├── Evaluation 메트릭 (Accuracy, Precision, Recall 추이)
-│   └── 비즈니스 메트릭 (매칭 점수 분포, 추천 비율)
-├── 구조화된 JSON 로깅
-└── 알림 시스템 (Alertmanager)
+├── ✅ Docker Compose (전체 시스템 컨테이너화)
+├── ✅ Redis (공고 데이터 캐싱)
+├── ✅ PostgreSQL (분석 결과 저장)
+├── ✅ Grafana + Prometheus
+│   ├── 비즈니스 메트릭 (매칭 점수 분포, 추천 비율) - 완료
+│   ├── API 호출 메트릭 (성공/실패율, 응답시간) - 향후 확장
+│   ├── LLM 메트릭 (토큰 사용량, 비용, Fallback 비율) - 향후 확장
+│   └── Evaluation 메트릭 (Accuracy, Precision, Recall 추이) - 향후 확장
+├── 구조화된 JSON 로깅 - 보류
+└── 알림 시스템 (Alertmanager) - 보류
 ```
 
-### **04-advanced** (확장 단계)
+### **04-rag-system** (다음 단계 - RAG 파이프라인)
+```
+PDF 이력서 기반 고급 매칭 시스템
+├── PDF 파싱 및 구조화
+│   ├── 경력 사항 추출
+│   ├── 프로젝트 경험 추출
+│   └── 기술 스택 추출
+├── 벡터 DB 구축 (ChromaDB/Weaviate)
+│   ├── 이력서 청킹 전략
+│   ├── 임베딩 생성 (OpenAI/Sentence Transformers)
+│   └── 유사도 기반 검색
+├── RAG 기반 매칭 개선
+│   ├── 공고 요구사항 vs 이력서 경험 매칭
+│   ├── 컨텍스트 기반 스킬 평가
+│   └── 프로젝트 경험 기반 적합도 분석
+└── Docker Compose 통합
+    └── ChromaDB 컨테이너 추가
+```
+
+### **05-advanced** (확장 단계)
 ```
 BI 분석 + 워크플로우 자동화
 ├── Superset (BI 대시보드)
@@ -161,27 +211,6 @@ BI 분석 + 워크플로우 자동화
 │   └── 공고 수집 → 분석 → Slack 알림 파이프라인
 └── Airbyte (선택)
     └── 멀티 플랫폼 데이터 파이프라인 (원티드/사람인 → PostgreSQL)
-```
-
-### **05-rag-system** (선택 - RAG 파이프라인)
-```
-옵션 A: RAGFlow 활용
-├── RAGFlow 설치 및 설정
-├── PDF 이력서 업로드 및 지식베이스 구축
-├── GUI 기반 RAG 파이프라인 관리
-└── 공고-이력서 매칭 테스트
-
-옵션 B: 직접 구현
-├── PDF 파싱 (PyPDF2, LlamaParse)
-├── 텍스트 청킹 전략 구현
-├── 벡터 DB (ChromaDB/Weaviate/Pinecone)
-├── 임베딩 생성 (OpenAI/Sentence Transformers)
-├── 유사도 기반 경험 검색
-└── 공고-이력서 고급 매칭 시스템
-
-옵션 C: 하이브리드 (추천)
-├── RAGFlow로 프로토타입 구축
-└── 핵심 로직만 직접 구현 및 커스터마이징
 ```
 
 ---
