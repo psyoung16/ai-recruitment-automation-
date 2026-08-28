@@ -1,209 +1,330 @@
-# 📊 실시간 모니터링 + 메트릭 시각화
+# 🚀 Integration & Validation
 
-> 배치 시스템의 운영 상태와 매칭 성능을 실시간으로 추적합니다.
+> "구현했다"를 넘어 "실제로 돌아간다"
 
-## 💡 03-monitoring
+## 💡 04-integration
 
-**프로덕션 환경에서 시스템을 관측하고 개선하기**
+**전체 시스템을 통합하고 실제 환경에서 검증**
 
-1. **PostgreSQL 기반 메트릭 저장**: 분석 결과를 DB에 저장하여 영속성 보장
-2. **Prometheus + Grafana 연동**: 실시간 메트릭 수집 및 시각화
-3. **Docker Compose 인프라**: Redis, PostgreSQL, Prometheus, Grafana 통합 구성
-4. **프로세스 간 메트릭 공유**: DB를 통한 메트릭 노출 아키텍처
+1. **End-to-End 통합 테스트**: Docker Compose로 전체 스택 실행
+2. **실데이터 검증**: 실제 공고 100+개로 파이프라인 전체 테스트
+3. **운영 편의 기능**: Slack 알림, 헬스체크 추가
+4. **문제 발견 및 해결**: 실제 운영 시 발생한 이슈 해결 과정 기록
 
-## 🔄 시스템 흐름도
+## 🔄 통합 테스트 프로세스
 
-```
-배치 분석 (batch_matcher.py)
-    ↓
-분석 결과 저장
-    ├─ output/{query}/job_*_analyzed.json (기존)
-    └─ PostgreSQL analyzed_jobs 테이블 (신규) ⭐
-        ├─ job_id, query, company, position
-        ├─ score, recommended
-        ├─ matched_skills, missing_skills
-        └─ reason, model, analyzed_at
+### Phase 1: 인프라 검증 ✅
+**목표:** Docker Compose 환경이 정상 동작하는지 확인
 
+**체크리스트:**
+- [ ] Docker Compose 실행 (`docker-compose up -d`)
+- [ ] Redis 컨테이너 정상 동작 확인
+- [ ] PostgreSQL 컨테이너 및 스키마 생성 확인
+- [ ] Prometheus 컨테이너 실행 및 설정 로드 확인
+- [ ] Grafana 컨테이너 실행 및 datasource 연결 확인
+- [ ] 컨테이너 간 네트워크 통신 확인
 
-메트릭 서버 (metrics_server.py) ⭐
-    ↓
-DB 쿼리 → Prometheus 메트릭 생성
-    ├─ jobs_analyzed_total (쿼리별 분석 건수)
-    ├─ jobs_recommended_total (쿼리별 추천 건수)
-    └─ job_avg_score (쿼리별 평균 점수)
-    ↓
-/metrics 엔드포인트 노출 (http://localhost:8000/metrics)
+**예상 문제:**
+- 포트 충돌 (6379, 5432, 9090, 3000, 8000)
+- 볼륨 권한 문제
+- 환경변수 누락
 
+---
 
-Prometheus (스크레이핑)
-    ↓
-10초마다 메트릭 수집 → 시계열 DB 저장
-    ↓
-Grafana (시각화) ⭐
-    ├─ Total Jobs Analyzed (게이지)
-    ├─ Total Recommended Jobs (게이지)
-    ├─ Average Matching Score (게이지)
-    └─ Jobs Analyzed by Query (테이블)
-```
+### Phase 2: 데이터 파이프라인 검증 ✅
+**목표:** 공고 수집 → 분석 → DB 저장 → 메트릭 노출 전체 흐름 확인
 
-## 🏗️ 아키텍처 특징
+**테스트 시나리오:**
+```bash
+# 1. 공고 10개 수집
+python collector.py --query "백엔드" --limit 10
 
-### 문제: 프로세스 분리로 인한 메트릭 손실
+# 2. 배치 분석 실행
+python batch_matcher.py --query "백엔드"
 
-Python Prometheus 클라이언트는 메트릭을 **프로세스 메모리**에 저장합니다.
-- `batch_matcher.py`에서 기록한 메트릭 → 프로세스 종료 시 사라짐
-- `metrics_server.py`는 별도 프로세스 → `batch_matcher.py`의 메트릭을 볼 수 없음
+# 3. PostgreSQL 데이터 확인
+psql -U matcher -d job_matcher -c "SELECT COUNT(*) FROM analyzed_jobs;"
 
-### 해결: PostgreSQL을 중간 저장소로 활용
+# 4. metrics_server 실행
+python metrics_server.py &
 
-```
-batch_matcher.py (분석 프로세스)
-    ↓
-PostgreSQL (영속 저장)
-    ↓
-metrics_server.py (메트릭 노출 프로세스)
-    ↓
-Prometheus (수집)
+# 5. Prometheus 메트릭 확인
+curl http://localhost:8000/metrics
+
+# 6. Grafana 대시보드 확인
+# http://localhost:3000 접속
 ```
 
-매 `/metrics` 요청마다 DB를 쿼리하여 최신 데이터를 Prometheus에 제공합니다.
+**측정 지표:**
+- 처리 시간: 공고당 평균 N초
+- 성공률: X/10 성공
+- Fallback 발생: Y건
+- DB 저장 성공률
 
-## 📊 모니터링 메트릭
+---
 
-### 비즈니스 메트릭 (현재 구현)
-- **분석 공고 수**: 쿼리별 총 분석 건수
-- **추천 공고 수**: 쿼리별 추천된 공고 수 (recommended=true)
-- **평균 매칭 점수**: 쿼리별 평균 점수 (0-100)
+### Phase 3: 대용량 테스트 ✅
+**목표:** 100개+ 공고로 안정성 및 성능 확인
 
-### 향후 확장 가능 메트릭
-- **LLM 메트릭**: 토큰 사용량, 비용, Fallback 비율
-- **API 메트릭**: 응답 시간, 성공/실패율
-- **Evaluation 메트릭**: Accuracy, Precision, Recall 추이
+**테스트 시나리오:**
+```bash
+# 다양한 키워드로 100개 이상 수집
+python collector.py --query "백엔드" --limit 50
+python collector.py --query "DevOps" --limit 30
+python collector.py --query "데이터엔지니어" --limit 30
 
-## 📈 Grafana 대시보드
+# 배치 분석 실행
+python batch_matcher.py --query "백엔드"
+python batch_matcher.py --query "DevOps"
+python batch_matcher.py --query "데이터엔지니어"
+```
 
-**Job Matcher - System Overview**
+**측정 지표:**
+- 총 처리 시간
+- 메모리 사용량
+- API Rate Limit 발생 빈도
+- Fallback 전환 비율
+- 에러 발생 및 재시도 패턴
+- Grafana 대시보드 성능
 
-| 패널 | 설명 | 쿼리 |
-|------|------|------|
-| Total Jobs Analyzed | 전체 분석 건수 | `sum(jobs_analyzed_total)` |
-| Total Recommended | 전체 추천 건수 | `sum(jobs_recommended_total)` |
-| Average Matching Score | 전체 평균 점수 | `avg(job_avg_score)` |
-| Jobs Analyzed by Query | 쿼리별 상세 통계 | 테이블 형식 |
+---
 
-접속: http://localhost:3000 (admin/admin)
+### Phase 4: 운영 편의 기능 추가 🔄
+**목표:** Slack 알림 등 실제 사용에 필요한 기능 추가
+
+**구현 항목:**
+- [ ] Slack webhook 연동
+  - 고득점 공고 발견 시 알림 (80점 이상)
+  - 배치 완료 알림
+  - 에러 발생 알림
+- [ ] 헬스체크 엔드포인트
+  - `/health`: 서비스 상태 확인
+  - `/metrics`: Prometheus 메트릭 (기존)
+- [ ] 운영 스크립트
+  - 전체 스택 시작/종료
+  - 로그 확인
+
+---
+
+## 📊 테스트 결과 (작성 예정)
+
+### Phase 1: 인프라 검증
+```
+상태: ⏳ 진행 예정
+```
+
+### Phase 2: 파이프라인 검증
+```
+상태: ⏳ 진행 예정
+```
+
+### Phase 3: 대용량 테스트
+```
+상태: ⏳ 진행 예정
+```
+
+### Phase 4: 운영 기능
+```
+상태: ⏳ 진행 예정
+```
+
+---
+
+## 📸 포트폴리오 자료 (수집 예정)
+
+### 스크린샷 체크리스트
+- [ ] Grafana 대시보드 (데이터 표시)
+- [ ] Slack 알림 예시
+- [ ] Prometheus 메트릭
+- [ ] 성공/실패 로그 예시
+- [ ] Docker 컨테이너 상태
+
+### 데모 영상/GIF
+- [ ] 전체 파이프라인 실행 과정
+- [ ] Grafana 대시보드 실시간 업데이트
+- [ ] Slack 알림 수신
+
+---
+
+## 🔧 추가 기능 (구현 예정)
+
+### 1. Slack 알림
+```python
+# slack_notifier.py
+def notify_high_score_job(job_id, company, position, score):
+    """80점 이상 고득점 공고 알림"""
+    pass
+
+def notify_batch_complete(query, total, recommended):
+    """배치 완료 알림"""
+    pass
+
+def notify_error(error_type, message):
+    """에러 발생 알림"""
+    pass
+```
+
+### 2. 헬스체크 엔드포인트
+```python
+# health_check.py
+@app.route('/health')
+def health():
+    return {
+        "status": "healthy",
+        "services": {
+            "redis": check_redis(),
+            "postgres": check_postgres(),
+            "prometheus": check_prometheus()
+        }
+    }
+```
+
+### 3. 운영 스크립트
+```bash
+# scripts/start.sh
+#!/bin/bash
+echo "Starting all services..."
+docker-compose up -d
+python metrics_server.py &
+echo "All services started!"
+
+# scripts/stop.sh
+#!/bin/bash
+echo "Stopping all services..."
+pkill -f metrics_server.py
+docker-compose down
+echo "All services stopped!"
+
+# scripts/logs.sh
+#!/bin/bash
+tail -f logs/metrics_server.log
+```
+
+---
 
 ## 📂 프로젝트 구조
 
 ```
-03-monitoring/
-├── batch_matcher.py                # 배치 분석 (DB 저장 추가)
-├── metrics_server.py               # Flask 메트릭 서버 (NEW)
-├── monitoring/
-│   ├── db.py                       # DB 연결 및 저장 로직 (NEW)
-│   └── metrics.py                  # 메트릭 정의
-├── docker-compose.yml              # 인프라 구성 (NEW)
-├── init.sql                        # DB 스키마 (NEW)
-├── config/
-│   ├── prometheus.yml              # Prometheus 설정 (NEW)
-│   └── grafana/                    # Grafana 대시보드 (NEW)
-│       ├── provisioning/
-│       │   ├── datasources/        # Prometheus 연결
-│       │   └── dashboards/         # 대시보드 자동 로드
-│       └── dashboards/
-│           └── system_overview.json
-├── collector.py                    # 공고 수집
-├── llm/                            # LLM 어댑터
-├── api/                            # 원티드 API
-├── data/                           # 수집된 공고
-└── output/                         # 분석 결과
+04-integration/
+├── README.md                       # 이 파일
+├── test_results/                   # 테스트 결과 (작성 예정)
+│   ├── phase1_infrastructure.md
+│   ├── phase2_pipeline.md
+│   ├── phase3_load_test.md
+│   └── screenshots/
+├── slack_notifier.py               # Slack 알림 (구현 예정)
+├── health_check.py                 # 헬스체크 (구현 예정)
+├── scripts/                        # 운영 스크립트 (구현 예정)
+│   ├── start.sh
+│   ├── stop.sh
+│   └── logs.sh
+├── docs/                           # 문서 (작성 예정)
+│   ├── troubleshooting.md          # 트러블슈팅 가이드
+│   └── operations.md               # 운영 가이드
+│
+├── batch_matcher.py                # 03-monitoring에서 복사
+├── collector.py
+├── metrics_server.py
+├── docker-compose.yml
+└── ...                             # 기타 파일들
 ```
 
 ---
 
-## 🚀 설치 및 실행
+## 🚀 빠른 시작
 
-### 1. 환경변수 설정
-
+### 1. 환경 설정
 ```bash
-# .env.example을 복사하여 .env 생성
+# .env 파일 생성
 cp .env.example .env
 
-# API 키 설정
-GEMINI_API_KEY=your_gemini_api_key
-GPT_API_KEY=your_gpt_api_key
-
-# DB 계정 (기본값 사용 가능)
-DB_HOST=localhost
-DB_PORT=5432
-DB_NAME=job_matcher
-DB_USER=matcher
-DB_PASSWORD=matcher123
-
-# Grafana 계정 (기본값 사용 가능)
-GRAFANA_ADMIN_USER=admin
-GRAFANA_ADMIN_PASSWORD=admin
+# API 키 입력
+# GEMINI_API_KEY=...
+# GPT_API_KEY=...
 ```
 
-### 2. 인프라 실행 (Docker Compose)
-
+### 2. 인프라 실행
 ```bash
-# 전체 인프라 실행
+# Docker Compose 실행
 docker-compose up -d
 
 # 컨테이너 상태 확인
 docker ps
-# → redis, postgres, prometheus, grafana 실행 확인
 ```
 
-### 3. Python 패키지 설치
-
+### 3. 메트릭 서버 실행
 ```bash
-pip install -r requirements.txt
-# → psycopg2-binary, prometheus-client, flask 등 설치
-```
-
-### 4. 메트릭 서버 실행
-
-```bash
-# 백그라운드 실행
 python metrics_server.py &
-
-# 메트릭 확인
-curl http://localhost:8000/metrics
 ```
 
-### 5. 배치 분석 실행
-
+### 4. 통합 테스트 시작
 ```bash
-# 공고 수집
+# Phase 2 시작
 python collector.py --query "백엔드" --limit 10
-
-# 배치 분석 (자동으로 DB에 저장됨)
 python batch_matcher.py --query "백엔드"
 ```
 
-### 6. 대시보드 확인
-
-- **Prometheus**: http://localhost:9090
-- **Grafana**: http://localhost:3000 (admin/admin)
-  - Dashboards → Job Matcher - System Overview
-
-### 접속 정보
-
-| 서비스 | URL | 계정 |
-|--------|-----|------|
-| Metrics Server | http://localhost:8000 | - |
-| Prometheus | http://localhost:9090 | - |
-| Grafana | http://localhost:3000 | admin/admin |
-| Redis | localhost:6379 | - |
-| PostgreSQL | localhost:5432 | matcher/matcher123 |
+### 5. 대시보드 확인
+- Grafana: http://localhost:3000 (admin/admin)
+- Prometheus: http://localhost:9090
+- Metrics: http://localhost:8000/metrics
 
 ---
 
-## 🔄 다음 단계 (04-integration)
+## 🤔 배포 전략: 왜 클라우드가 아닌 로컬인가?
 
-- 전체 스택 통합 테스트 (Docker Compose)
-- 실데이터 검증 (100+ 공고)
-- Slack 알림 연동
-- 포트폴리오 자료 수집 (스크린샷, 데모)
+### 클라우드 배포를 고려했지만...
+
+**AWS/GCP 무료 티어의 한계:**
+- EC2 하나에 `docker-compose up`만 하는 건 포트폴리오 차별화 안 됨
+- 의미 있으려면 Auto Scaling, RDS Multi-AZ, CloudWatch 등 여러 서비스 조합 필요
+- 무료 티어로는 제한적, 유료로 하기엔 비용 부담
+
+**이미 충분한 기술 스택:**
+```
+현재 시스템이 이미 "여러 서비스 통합 운영"
+├── Redis (캐싱)
+├── PostgreSQL (데이터)
+├── Prometheus (메트릭 수집)
+├── Grafana (시각화)
+└── Flask (메트릭 서버)
+
+→ 로컬이든 클라우드든 동일한 구조
+→ Docker Compose로 어디서든 실행 가능
+```
+
+### 대신 집중한 것
+
+**1. 실제 문제 해결 경험**
+- 프로세스 분리로 인한 메트릭 손실 문제
+- PostgreSQL을 통한 아키텍처 재설계
+- Grafana datasource uid 불일치 트러블슈팅
+- Gauge 메트릭에 rate() 함수 사용 불가 이슈
+
+**2. 포트폴리오 자료의 질**
+- 스크린샷 (Grafana 대시보드, 로그)
+- 데모 영상/GIF
+- 트러블슈팅 문서
+- 성능 테스트 결과
+
+**3. 실무 적용 가능성**
+- Production-ready 코드 품질
+- 모니터링, 로깅, 메트릭 설계
+- Evaluation을 통한 품질 검증
+
+### 결론
+
+"어디서 돌리는가"보다 "무엇을 배웠는가"가 중요합니다.
+- 맥미니에서 테스트하여 자료 확보
+- 필요 시 언제든 재실행 가능
+- 시간과 비용을 RAG 구현에 집중
+
+---
+
+## 🔄 다음 단계 (05-rag-system)
+
+통합 테스트 완료 후:
+- PDF 이력서 파싱 및 구조화
+- 벡터 DB (ChromaDB) 구축
+- RAG 기반 매칭 시스템
+- 매칭 정확도 개선
