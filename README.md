@@ -1,13 +1,15 @@
 # 🎯 AI Job Matching Series
 
 > AI Agent 기술을 단계별로 학습하며 실용적인 채용 자동화 시스템을 구축하는 프로젝트 시리즈
+> 정리 blog https://velog.io/@mumini/series/AI-%EC%B1%84%EC%9A%A9-%EC%9E%90%EB%8F%99%ED%99%94-%EC%B6%94%EC%B2%9C-%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%A8-%EB%A7%8C%EB%93%A4%EA%B8%B0
+
 
 ## 📚 프로젝트 목록
 
 ### [01-basic-matcher](./01-basic-matcher) ✅
 **AI 채용공고 매칭 시스템 (기본편)**
 
-원티드 채용공고를 AI가 자동으로 분석하고 내 프로필과의 매칭도를 계산합니다.
+채용공고를 AI가 자동으로 분석하고 내 프로필과의 매칭도를 계산합니다.
 
 **핵심 학습:**
 - Gemini Function Calling
