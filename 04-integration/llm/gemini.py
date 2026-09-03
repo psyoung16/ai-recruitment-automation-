@@ -1,7 +1,7 @@
 """
 Gemini 모델 어댑터
 """
-from google import genai
+import google.generativeai as genai
 from models import JobRequirement, MatchResult
 from config import GEMINI_MODEL
 from api import get_job_detail
