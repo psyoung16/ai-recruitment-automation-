@@ -8,7 +8,9 @@ cd "$PROJECT_DIR"
 
 # .env 파일 로드
 if [ -f .env ]; then
-    export $(cat .env | grep -v '^#' | xargs)
+    set -a
+    source .env
+    set +a
 else
     echo "❌ .env 파일이 없습니다. .env.example을 복사하여 .env를 생성하세요."
     exit 1
