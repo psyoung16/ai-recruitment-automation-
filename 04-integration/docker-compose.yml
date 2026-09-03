@@ -62,6 +62,14 @@ services:
       - prometheus
     restart: unless-stopped
 
+  # Push Gateway - 배치 작업 메트릭 수집
+  pushgateway:
+    image: prom/pushgateway:latest
+    container_name: job-matcher-pushgateway
+    ports:
+      - "9091:9091"
+    restart: unless-stopped
+
 volumes:
   redis-data:
   postgres-data:

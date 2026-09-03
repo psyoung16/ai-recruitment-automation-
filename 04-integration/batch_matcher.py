@@ -6,19 +6,14 @@ import argparse
 import json
 import os
 import sys
+import time
 from pathlib import Path
 from typing import List
 from dotenv import load_dotenv
 from matcher import JobMatcher
 from config import MATCH_THRESHOLD, GEMINI_MODEL, MY_PROFILE, setup_logger
-from monitoring.metrics import (
-    jobs_analyzed_total,
-    job_matching_score,
-    jobs_recommended_total,
-    jobs_processing,
-    batch_jobs_running
-)
 from monitoring.db import save_analyzed_job
+from prometheus_client import CollectorRegistry, Counter, Histogram, Gauge, push_to_gateway
 
 # .env 파일 로드
 load_dotenv()
@@ -36,6 +31,41 @@ class BatchMatcher:
         self.data_dir = Path(base_data_dir) / query
         self.output_dir = Path(base_output_dir) / query
         self.output_dir.mkdir(parents=True, exist_ok=True)
+
+        # Push Gateway용 독립적인 레지스트리
+        self.registry = CollectorRegistry()
+
+        # 메트릭 정의
+        self.jobs_analyzed_total = Counter(
+            'batch_jobs_analyzed_total',
+            'Total number of jobs analyzed in batch',
+            ['query'],
+            registry=self.registry
+        )
+        self.jobs_recommended_total = Counter(
+            'batch_jobs_recommended_total',
+            'Total number of recommended jobs in batch',
+            ['query'],
+            registry=self.registry
+        )
+        self.job_matching_score = Histogram(
+            'batch_job_matching_score',
+            'Job matching score distribution in batch',
+            ['query'],
+            buckets=(0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100),
+            registry=self.registry
+        )
+        self.jobs_processing = Gauge(
+            'batch_jobs_processing',
+            'Number of jobs currently being processed',
+            registry=self.registry
+        )
+        self.batch_duration_seconds = Histogram(
+            'batch_duration_seconds',
+            'Batch processing duration in seconds',
+            ['query'],
+            registry=self.registry
+        )
 
     def is_analyzed(self, job_id: str) -> bool:
         """이미 분석된 공고인지 확인"""
@@ -74,12 +104,12 @@ class BatchMatcher:
         logger.info('=' * 60)
 
         # 처리 중인 공고 수 증가
-        jobs_processing.inc()
+        self.jobs_processing.inc()
 
         # 중복 체크
         if self.is_analyzed(job_id):
             logger.info(f"⏭️  이미 분석됨: {job_id}")
-            jobs_processing.dec()
+            self.jobs_processing.dec()
             return {
                 "job_id": job_id,
                 "status": "skipped",
@@ -152,13 +182,13 @@ class BatchMatcher:
                 logger.warning("⚠️  DB 저장 실패 (계속 진행)")
 
             # 메트릭 기록
-            jobs_analyzed_total.labels(query=self.query).inc()
-            job_matching_score.labels(query=self.query).observe(match_result.score)
+            self.jobs_analyzed_total.labels(query=self.query).inc()
+            self.job_matching_score.labels(query=self.query).observe(match_result.score)
             if is_recommended:
-                jobs_recommended_total.labels(query=self.query).inc()
+                self.jobs_recommended_total.labels(query=self.query).inc()
 
             # 처리 중인 공고 수 감소
-            jobs_processing.dec()
+            self.jobs_processing.dec()
 
             return {
                 "job_id": job_id,
@@ -170,7 +200,7 @@ class BatchMatcher:
 
         except Exception as e:
             logger.error(f"\n❌ 에러 발생: {str(e)}", exc_info=True)
-            jobs_processing.dec()
+            self.jobs_processing.dec()
             return {
                 "job_id": job_id,
                 "status": "failed",
@@ -183,8 +213,7 @@ class BatchMatcher:
         logger.info(f"📂 출력 위치: {self.output_dir}")
         logger.info("=" * 60)
 
-        # 배치 작업 시작
-        batch_jobs_running.inc()
+        start_time = time.time()
 
         results = []
         for idx, job_id in enumerate(job_ids, 1):
@@ -192,13 +221,33 @@ class BatchMatcher:
             result = self.process_job(job_id)
             results.append(result)
 
-        # 배치 작업 완료
-        batch_jobs_running.dec()
+        # 배치 처리 시간 기록
+        duration = time.time() - start_time
+        self.batch_duration_seconds.labels(query=self.query).observe(duration)
 
         # 요약 출력
         self._print_summary(results)
 
+        # Push Gateway로 메트릭 전송
+        self._push_metrics()
+
         return results
+
+    def _push_metrics(self):
+        """Push Gateway로 메트릭 전송"""
+        try:
+            push_gateway_url = os.getenv('PUSH_GATEWAY_URL', 'localhost:9091')
+            logger.info(f"\n📤 Push Gateway로 메트릭 전송 중... ({push_gateway_url})")
+
+            push_to_gateway(
+                push_gateway_url,
+                job='batch_matcher',
+                registry=self.registry
+            )
+
+            logger.info("✅ 메트릭 전송 완료")
+        except Exception as e:
+            logger.warning(f"⚠️  메트릭 전송 실패: {e}")
 
     def _print_summary(self, results: List[dict]):
         """배치 처리 결과 요약"""
