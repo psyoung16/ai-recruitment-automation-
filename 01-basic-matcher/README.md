@@ -130,3 +130,4 @@ python3 main.py <job_id>
 ## 📝 참고 자료
 - [Gemini Function Calling 가이드](https://ai.google.dev/gemini-api/docs/function-calling)
 
+### 🔄 Function Calling & Structured Output 전체 흐름

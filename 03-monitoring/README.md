@@ -201,9 +201,9 @@ python batch_matcher.py --query "백엔드"
 
 ---
 
-## 🔄 다음 단계 (04-rag-system)
+## 🔄 다음 단계 (04-integration)
 
-- PDF 이력서 파싱 및 구조화
-- 벡터 DB (ChromaDB) 구축 및 임베딩
-- RAG 기반 매칭 시스템 (공고-이력서 경험 매칭)
-- Docker Compose에 벡터 DB 통합
+- 전체 스택 통합 테스트 (Docker Compose)
+- 실데이터 검증 (100+ 공고)
+- Slack 알림 연동
+- 포트폴리오 자료 수집 (스크린샷, 데모)

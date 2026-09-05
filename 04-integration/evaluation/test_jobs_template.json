@@ -1,0 +1,104 @@
+{
+  "_instruction": "이 파일을 test_jobs.json으로 복사한 후, 각 공고를 직접 읽고 label을 작성하세요.",
+  "_reference_profile": {
+    "languages": ["Java"],
+    "frameworks": ["Spring Boot", "Spring MVC"],
+    "databases": ["MySQL", "PostgreSQL"],
+    "experience_years": 3,
+    "tools": ["Git", "Docker"],
+    "interests": ["백엔드 API 개발", "MSA"]
+  },
+  "_labeling_guide": {
+    "apply": "반드시 지원해야 할 공고 (스킬 매칭 + 경력 적합 + 도메인 관심)",
+    "no_apply": "절대 지원하면 안 되는 공고 (스킬 불일치 or 도메인 미스매치)",
+    "borderline": "애매한 공고 (일부 매칭하지만 확신 없음, 평가에서 제외 가능)"
+  },
+  "apply": [
+    {
+      "job_id": "284183",
+      "company": "코드잇",
+      "position": "백엔드 엔지니어",
+      "url": "https://www.wanted.co.kr/wd/284183",
+      "label_reason": "Kotlin은 일치하지만, java키워드가 존재함. 추가로 스택에 맞지 않아도, 빠르게 배우고 열정이 있는 백엔드 엔지니어라면 지원해보라는 문구 존재. ",
+      "my_expected_score": 70,
+      "key_match": [],
+      "concerns": []
+    }
+  ],
+  "borderline": [
+    {
+      "job_id": "231846",
+      "company": "위레이저",
+      "position": "백엔드 개발자",
+      "url": "https://www.wanted.co.kr/wd/231846",
+      "label_reason": "백엔드 공고지만 실제 업무는 Ai에이전트 개발업무가 포함되어있음. 관련 개발 업무가 하나도 없기 때문에 보완해서 지원하는 것을 추천 ",
+      "my_expected_score": null,
+      "key_mismatch": [],
+      "why_not": ""
+    }
+  ],
+  "no_apply": [
+    {
+      "job_id": "359638",
+      "company": "에이블리코퍼레이션",
+      "position": "백엔드 엔지니어",
+      "url": "https://www.wanted.co.kr/wd/359638",
+      "label_reason": "장고 경험이 아예 존재하지 않음.",
+      "my_expected_score": null,
+      "pros": [],
+      "cons": []
+    }
+  ],
+  "_all_jobs": [
+    {
+      "job_id": "231846",
+      "company": "위레이저",
+      "position": "백엔드 개발자"
+    },
+    {
+      "job_id": "284183",
+      "company": "코드잇",
+      "position": "백엔드 엔지니어"
+    },
+    {
+      "job_id": "300610",
+      "company": "와탭랩스",
+      "position": "백엔드 개발자"
+    },
+    {
+      "job_id": "317126",
+      "company": "데일리펀딩",
+      "position": "백엔드 개발자"
+    },
+    {
+      "job_id": "332282",
+      "company": "핀다",
+      "position": "백엔드 개발자"
+    },
+    {
+      "job_id": "359638",
+      "company": "에이블리코퍼레이션",
+      "position": "백엔드 엔지니어"
+    },
+    {
+      "job_id": "374393",
+      "company": "공간의가치",
+      "position": "백엔드 엔지니어"
+    },
+    {
+      "job_id": "376799",
+      "company": "왓섭",
+      "position": "백엔드 개발자"
+    },
+    {
+      "job_id": "379010",
+      "company": "뉴메스",
+      "position": "백엔드 개발자"
+    },
+    {
+      "job_id": "380102",
+      "company": "핀다",
+      "position": "백엔드 개발자"
+    }
+  ]
+}

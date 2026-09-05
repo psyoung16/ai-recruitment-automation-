@@ -1,13 +1,19 @@
 # 🎯 AI Job Matching Series
 
 > AI Agent 기술을 단계별로 학습하며 실용적인 채용 자동화 시스템을 구축하는 프로젝트 시리즈
+> [정리 blog](https://velog.io/@mumini/series/AI-%EC%B1%84%EC%9A%A9-%EC%9E%90%EB%8F%99%ED%99%94-%EC%B6%94%EC%B2%9C-%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%A8-%EB%A7%8C%EB%93%A4%EA%B8%B0)
+
+**핵심 경험:** LLM Agent 설계, Evaluation 시스템 구축, 프로덕션 모니터링 & 운영 자동화
+
 
 ## 📚 프로젝트 목록
 
 ### [01-basic-matcher](./01-basic-matcher) ✅
 **AI 채용공고 매칭 시스템 (기본편)**
 
-원티드 채용공고를 AI가 자동으로 분석하고 내 프로필과의 매칭도를 계산합니다.
+[[AI 채용 자동화 #1] Gemini Function Calling으로 채용공고 매칭 시스템 만들기](https://velog.io/@mumini/AI-%EC%B1%84%EC%9A%A9-%EC%9E%90%EB%8F%99%ED%99%94-1-Gemini-Function-Calling%EC%9C%BC%EB%A1%9C-%EC%B1%84%EC%9A%A9%EA%B3%B5%EA%B3%A0-%EB%A7%A4%EC%B9%AD-%EC%8B%9C%EC%8A%A4%ED%85%9C-%EB%A7%8C%EB%93%A4%EA%B8%B0)
+
+채용공고를 AI가 자동으로 분석하고 내 프로필과의 매칭도를 계산합니다.
 
 **핵심 학습:**
 - Gemini Function Calling
@@ -23,6 +29,16 @@
 
 ### [02-batch-evaluator](./02-batch-evaluator) ✅
 **배치 자동화 + Evaluation 시스템**
+
+[[AI 채용 자동화 #2-1] 배치 처리를 위한 파이프라인 분리](https://velog.io/@mumini/AI-%EC%B1%84%EC%9A%A9-%EC%9E%90%EB%8F%99%ED%99%94-2-1-%EB%B0%B0%EC%B9%98-%EC%B2%98%EB%A6%AC%EB%A5%BC-%EC%9C%84%ED%95%9C-%ED%8C%8C%EC%9D%B4%ED%94%84%EB%9D%BC%EC%9D%B8-%EB%B6%84%EB%A6%AC)
+
+[[AI 채용 자동화 #2-2] 에러 핸들링 & LLM 어댑터 패턴](https://velog.io/@mumini/AI-%EC%B1%84%EC%9A%A9-%EC%9E%90%EB%8F%99%ED%99%94-1-Gemini-Function-Calling%EC%9C%BC%EB%A1%9C-%EC%B1%84%EC%9A%A9%EA%B3%B5%EA%B3%A0-%EB%A7%A4%EC%B9%AD-%EC%8B%9C%EC%8A%A4%ED%85%9C-%EB%A7%8C%EB%93%A4%EA%B8%B0)
+
+[[AI 채용 자동화 #2-3] Evaluation - "쓸만한" 시스템 검증하기](https://velog.io/@mumini/AI-%EC%B1%84%EC%9A%A9-%EC%9E%90%EB%8F%99%ED%99%94-2-3-Evaluation-%EC%93%B8%EB%A7%8C%ED%95%9C-%EC%8B%9C%EC%8A%A4%ED%85%9C-%EA%B2%80%EC%A6%9D%ED%95%98%EA%B8%B0)
+
+[[AI 채용 자동화 #2-4] 이제 평가를 돌려보자.](https://velog.io/@mumini/AI-%EC%B1%84%EC%9A%A9-%EC%9E%90%EB%8F%99%ED%99%94-2-4-%EC%9D%B4%EC%A0%9C-%ED%8F%89%EA%B0%80%EB%A5%BC-%EB%8F%8C%EB%A0%A4%EB%B3%B4%EC%9E%90)
+
+[[AI 채용 자동화 #2-5] 평가를 기준으로 개선해보자.](https://velog.io/@mumini/AI-%EC%B1%84%EC%9A%A9-%EC%9E%90%EB%8F%99%ED%99%94-2-5-%ED%8F%89%EA%B0%80%EB%A5%BC-%EA%B8%B0%EC%A4%80%EC%9C%BC%EB%A1%9C-%EA%B0%9C%EC%84%A0%ED%95%B4%EB%B3%B4%EC%9E%90.%EC%9D%8C-%ED%94%84%EB%A1%AC%ED%94%84%ED%8A%B8-%EA%B0%9C%EC%84%A0)
 
 여러 공고를 자동으로 처리하고 시스템의 정확도를 측정합니다.
 
@@ -43,6 +59,8 @@
 ### [03-monitoring](./03-monitoring) ✅
 **실시간 모니터링 + 메트릭 시각화**
 
+[[AI 채용 자동화 #3] 실시간 모니터링 & 대시보드 구축](https://velog.io/@mumini/AI-%EC%B1%84%EC%9A%A9-%EC%9E%90%EB%8F%99%ED%99%94-3-%EC%8B%A4%EC%8B%9C%EA%B0%84-%EB%AA%A8%EB%8B%88%ED%84%B0%EB%A7%81-%EB%8C%80%EC%8B%9C%EB%B3%B4%EB%93%9C-%EA%B5%AC%EC%B6%95-%EC%9D%B4%EB%AF%B8%EC%A7%80-%EC%B6%94%EA%B0%80-%EB%B0%8F-%EB%A7%88%EB%AC%B4%EB%A6%AC-%ED%95%84%EC%9A%94)
+
 배치 시스템의 운영 상태와 매칭 성능을 실시간으로 추적합니다.
 
 **핵심 학습:**
@@ -59,15 +77,26 @@
 
 ---
 
-## 단계별 구현 계획
+### [04-integration](./04-integration) 🔄
+**통합 검증 & 운영 준비**
 
+[[AI 채용 자동화 #4] 배포 및 실행](https://velog.io/@mumini/AI-%EC%B1%84%EC%9A%A9-%EC%9E%90%EB%8F%99%ED%99%94-4-%EB%B0%B0%ED%8F%AC-%EB%B0%8F-%EC%8B%A4%ED%96%89)
 
-```
-01-basic-matcher (현재)
-  ↓
-  Function Calling 이해
-  ↓
-```
+구현한 시스템을 실제 환경에서 통합하고 검증합니다.
+
+**핵심 학습:**
+- End-to-End 통합 테스트
+- 실데이터 검증 및 성능 측정
+- 운영 편의 기능 구현 (Slack 알림)
+- 트러블슈팅 및 문제 해결
+
+**주요 기능:**
+- Docker Compose 전체 스택 검증
+- 100+ 공고로 대용량 테스트
+- Slack 알림 연동
+- 포트폴리오 자료 수집 (스크린샷, 데모)
+
+---
 
 ## 🛠️ 기술 스택
 
@@ -82,106 +111,45 @@
 ai-job-matcher/
 ├── README.md                      # 👈 현재 파일
 ├── 01-basic-matcher/              # 기본 매칭 시스템 ✅
-│   ├── README.md
-│   ├── main.py
-│   └── ...
 ├── 02-batch-evaluator/            # 배치 처리 & 평가 ✅
-│   ├── README.md
-│   ├── collector.py               # 공고 수집
-│   ├── batch_matcher.py           # 배치 분석
-│   ├── evaluation/                # 평가 시스템
-│   │   ├── evaluate.py
-│   │   ├── test_jobs.json
-│   │   └── reports/
-│   ├── llm/                       # LLM 어댑터
-│   └── ...
 ├── 03-monitoring/                 # 모니터링 & 인프라 ✅
-│   ├── README.md
-│   ├── batch_matcher.py           # DB 저장 기능 추가
-│   ├── metrics_server.py          # 메트릭 노출 서버
-│   ├── docker-compose.yml         # 인프라 구성
-│   ├── monitoring/
-│   │   ├── db.py                  # DB 연결 및 저장
-│   │   └── metrics.py             # 메트릭 정의
-│   └── config/
-│       ├── prometheus.yml         # Prometheus 설정
-│       └── grafana/               # Grafana 대시보드
+├── 04-integration/                # 통합 검증 & 운영 🔄               
 ```
 
 ## 🚀 시작하기
 
 각 프로젝트 폴더의 README를 참고하세요.
 
+---
+
 ## 📋 단계별 구현 계획
 
 ### **02-batch-evaluator** ✅
-```
-배치 자동화 + Evaluation 시스템
-├── ✅ 재시도 로직 & 에러 핸들링 (Exponential Backoff)
-├── ✅ LLM 어댑터 패턴 & Fallback 시스템
-├── ✅ 중복 분석 방지
-├── ✅ Evaluation 시스템 구축
-│   ├── ✅ Ground Truth 테스트셋 구축 (10개 공고)
-│   ├── ✅ 매칭 점수 정확도 측정 (Accuracy, Precision, Recall, F1, MAE)
-│   └── ✅ 실패 케이스 분석 및 개선 방향 도출
-├── 자동 스케줄링 (cron/scheduler) - 보류
-└── Slack 알림 연동 - 보류
-```
+- 배치 자동화 + Evaluation 시스템
+- 재시도 로직, LLM 어댑터 패턴, Fallback 시스템
+- Ground Truth 기반 정량 평가 (Accuracy, Precision, Recall, F1, MAE)
 
 ### **03-monitoring** ✅
-```
-실시간 모니터링 + 인프라 구축
-├── ✅ Docker Compose (전체 시스템 컨테이너화)
-├── ✅ Redis (공고 데이터 캐싱)
-├── ✅ PostgreSQL (분석 결과 저장)
-├── ✅ Grafana + Prometheus
-│   ├── 비즈니스 메트릭 (매칭 점수 분포, 추천 비율) - 완료
-│   ├── API 호출 메트릭 (성공/실패율, 응답시간) - 향후 확장
-│   ├── LLM 메트릭 (토큰 사용량, 비용, Fallback 비율) - 향후 확장
-│   └── Evaluation 메트릭 (Accuracy, Precision, Recall 추이) - 향후 확장
-├── 구조화된 JSON 로깅 - 보류
-└── 알림 시스템 (Alertmanager) - 보류
-```
+- Docker Compose 인프라 구축 (Redis, PostgreSQL, Prometheus, Grafana)
+- 비즈니스 메트릭 모니터링 (매칭 점수 분포, 추천 비율, 처리 건수)
+- 실시간 대시보드 시각화
 
-### **04-rag-system** (다음 단계 - RAG 파이프라인)
-```
-PDF 이력서 기반 고급 매칭 시스템
-├── PDF 파싱 및 구조화
-│   ├── 경력 사항 추출
-│   ├── 프로젝트 경험 추출
-│   └── 기술 스택 추출
-├── 벡터 DB 구축 (ChromaDB/Weaviate)
-│   ├── 이력서 청킹 전략
-│   ├── 임베딩 생성 (OpenAI/Sentence Transformers)
-│   └── 유사도 기반 검색
-├── RAG 기반 매칭 개선
-│   ├── 공고 요구사항 vs 이력서 경험 매칭
-│   ├── 컨텍스트 기반 스킬 평가
-│   └── 프로젝트 경험 기반 적합도 분석
-└── Docker Compose 통합
-    └── ChromaDB 컨테이너 추가
-```
+### **04-integration** 🔄
+- **통합 검증 & 운영 자동화**
+- Cron 기반 자동 실행 (매일 오전 10시)
+- Slack 알림 연동 (추천 공고 상세 + 일일 통계 요약)
+- 환경변수 기반 프로필 관리
+- 실데이터 검증 (100+ 공고 테스트)
 
-### **05-advanced** (확장 단계)
-```
-BI 분석 + 워크플로우 자동화
-├── Superset (BI 대시보드)
-│   ├── 기술 스택 트렌드 분석 (SQL 기반)
-│   ├── 매칭 패턴 발견 및 인사이트
-│   └── 월별/요일별 추천 공고 분석
-├── n8n (워크플로우 자동화)
-│   └── 공고 수집 → 분석 → Slack 알림 파이프라인
-└── Airbyte (선택)
-    └── 멀티 플랫폼 데이터 파이프라인 (원티드/사람인 → PostgreSQL)
-```
+### **05-rag-system** (다음 단계)
+- **PDF 이력서 기반 고급 매칭**
+- PDF 파싱 및 구조화 (경력, 프로젝트, 기술 스택 추출)
+- 벡터 DB 구축 (ChromaDB/Weaviate)
+- RAG 기반 컨텍스트 매칭
 
----
-## 아래는 추후 평가후 Readme 지우기 ##
-## 💡 이 프로젝트로 얻을 수 있는 경험
+### **06-advanced** (확장 단계)
+- **BI 분석 + 워크플로우 자동화**
+- Superset (기술 스택 트렌드, 매칭 패턴 분석)
+- n8n (워크플로우 오케스트레이션)
+- Airbyte (멀티 플랫폼 데이터 파이프라인)
 
-✅ **LLM/Agent 시스템의 관측(trace, log, metric) 설계 및 운영**
-✅ **장기 실행 AI 워크플로우 설계 (상태 저장, 재시도, 장애 복구)**
-✅ **실행 자동화 및 운영 효율화 (MLOps, Workflow Orchestration)**
-✅ **품질 평가(Evals), 회귀 테스트, 실험 설계**
-✅ **프로덕션 레벨의 소프트웨어 엔지니어링 (API 설계, 모듈화, 테스트, 배포)**
-✅ **"돌아간다"와 "쓸만하다"의 차이를 측정하고 개선한 경험**

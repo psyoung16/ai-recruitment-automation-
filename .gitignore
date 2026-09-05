@@ -12,7 +12,6 @@ wanted_api_example.json
 # Python
 *.log
 *.jsonl
-*.tmp
 __pycache__/
 *.pyc
 .venv/
@@ -22,15 +21,18 @@ venv/
 .Python
 pip-log.txt
 
-# 출력 & 데이터
-output/
-data/
-logs/
-*.log
+# 출력 & 데이터 (모든 프로젝트 자동 적용)
+**/output/
+**/data/
+**/logs/
+
+# 예외: Evaluation 테스트 데이터는 유지
+!02-batch-evaluator/evaluation/test_jobs.json
+!**/evaluation/**
 
 # IDE
 .DS_Store
-*.idea
+.idea/
 .vscode/
 *.swp
 *.swo
@@ -44,3 +46,9 @@ node_modules/
 
 # Docker
 *.env.docker
+docker-compose.override.yml
+
+# 임시 파일
+*.md~
+*.tmp
+dfsd.md
