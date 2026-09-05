@@ -112,44 +112,6 @@ ai-job-matcher/
 
 각 프로젝트 폴더의 README를 참고하세요.
 
-## 🚀 Production으로 가는 길
-
-### 1. **진짜 Multi-step Reasoning**
-**현재:** 고정된 3단계 파이프라인 (상세조회 → 추출 → 매칭)
-
-**목표:** LLM이 상황에 따라 다른 경로를 선택
-- [ ] 공고 본문이 부족하면 회사 소개 페이지 추가 조회
-- [ ] 매칭 점수가 애매하면(50~70점) 재검토 판단
-- [ ] 컨텍스트 기반 의사결정 및 동적 도구 호출
-
-### 2. **평가(Evaluation)** ✅
-**"돌아간다" ≠ "쓸만하다"**
-
-- [x] 정량적 평가: Ground Truth 기반 테스트셋 구축
-- [x] 매칭 점수 정확도 측정 및 문서화 (Accuracy, Precision, Recall, F1, MAE)
-- [x] 실패 케이스 분석으로 개선 방향 도출
-- [ ] 프롬프트 변경 시 회귀 테스트 자동화
-- [ ] 실험 설계 및 A/B 테스트
-
-### 3. **LLM 응답 품질 검증** ✅
-- [ ] 스키마는 맞지만 내용이 이상한 경우 처리 (예: "Python" → "파이썬 짱짱")
-- [x] 재시도 로직 (exponential backoff)
-- [x] Rate limiting 및 장애 복구 (Fallback 모델 전환)
-
-### 4. **관측(Observability)** ✅ (부분)
-- [x] **Grafana + Prometheus**: 비즈니스 메트릭 (분석 건수, 추천 비율, 매칭 점수)
-- [ ] **Grafana + Prometheus**: API 메트릭, 토큰 사용량, trace (향후 확장)
-- [ ] **Superset**: 매칭 분포, 스킬 트렌드, 실험 결과
-- [ ] **ELK**: Agent 추론 과정 로그 분석
-
-### 5. **확장**
-- [ ] 자동 스케줄링 & Slack 알림
-- [ ] 멀티 플랫폼 크롤링
-- [ ] 데이터 파이프라인 (Airbyte)
-- [ ] PDF 기반 프로필 분석 (RAGFlow MCP)
-
----
-
 ## 📋 단계별 구현 계획
 
 ### **02-batch-evaluator** ✅
